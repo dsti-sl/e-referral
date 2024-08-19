@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "preinstall": "npm run enforce-node-version",
+    "enforce-node-version": "node -v | grep -q 'v20.15.0' || (echo 'Explicit node version is required. Expected v20.15.0' && exit 1)",
+
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

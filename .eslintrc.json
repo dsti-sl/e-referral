@@ -60,7 +60,7 @@
       }
     ],
     "import/newline-after-import": "warn",
-    "import/no-unused-modules": ["warn", { "unusedExports": true }],
+    "import/no-unused-modules": ["error", { "varsIgnorePattern": "^_" }],
     "object-curly-newline": [
       "error",
       {

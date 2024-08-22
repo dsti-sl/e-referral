@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+/* import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
@@ -17,6 +17,49 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>
+    </html>
+  );
+}
+ */
+
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'e-Refferal Pathways Dashboard',
+  description:
+    'e-Refferal Pathways Client Dashboard for creating and managing flows and data visualizations.',
+  keywords: [
+    'e-refferal pathways',
+    'client dashboard',
+    'flow creation',
+    'data visualization',
+  ],
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <div className="flex h-screen overflow-hidden">
+          <Sidebar />
+          <div className="flex w-full flex-1 flex-col">
+            <Header />
+            <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
+              {children}
+            </main>
+          </div>
+        </div>
+      </body>
     </html>
   );
 }

@@ -13,3 +13,8 @@ export function login(username: string, password: string): boolean {
   }
   return false;
 }
+
+export function logout(): void {
+  // Logout logic for user
+  localStorage.removeItem('token');
+}

@@ -28,12 +28,15 @@ export function User() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button onClick={() => {}} className="flex items-center gap-2">
+        <Button
+          onClick={() => {}}
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-gray-700 hover:bg-blue-500 hover:text-white"
+        >
           {user?.image ? (
             <Image
               src={user.image}
-              width={50}
-              height={50}
+              width={48}
+              height={48}
               alt="Avatar"
               className="rounded-full"
             />

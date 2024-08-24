@@ -2,7 +2,7 @@ import { Home, Workflow } from 'lucide-react';
 
 export default function Sidebar() {
   return (
-    <div className="items-cent h-50 boarder-2 boarder-gray-900 bg-erefer-rose w-50 flex flex-col justify-start">
+    <div className="items-cent h-50 boarder-2 boarder-gray-900 w-50 flex flex-col justify-start bg-erefer-rose">
       <div className="mb-6">
         <nav className="space-7-4 flex flex-col py-16">
           <a

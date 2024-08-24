@@ -12,7 +12,7 @@ export default function FlowsCard({ status, flows }: FlowsCardProps) {
           flows.map((flow) => (
             <li
               key={flow.id}
-              className="boarder hover:bg-erefer-rose rounded p-4 hover:border-gray-200"
+              className="boarder rounded p-4 hover:border-gray-200 hover:bg-erefer-rose"
             >
               <h3 className="text-md font-semibold text-black">{flow.name}</h3>
               <p className="text-sm text-gray-500">Status: {status}</p>

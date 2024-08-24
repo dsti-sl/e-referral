@@ -27,10 +27,10 @@ export function User() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger>
         <Button
           onClick={() => {}}
-          className="hover:bg-blue flex h-12 w-12 items-center justify-center rounded-full bg-white text-gray-700 hover:text-white"
+          className="bg-erefer-rose flex h-12 w-12 items-center justify-center rounded-full text-gray-700 hover:text-white"
         >
           {user?.image ? (
             <Image
@@ -41,7 +41,7 @@ export function User() {
               className="rounded-full"
             />
           ) : (
-            <AvatarIcon className="h-8 w-8 text-gray-400" />
+            <AvatarIcon className="h-48 w-48 text-white hover:text-black" />
           )}
         </Button>
       </DropdownMenuTrigger>

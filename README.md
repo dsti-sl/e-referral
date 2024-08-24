@@ -4,14 +4,26 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 First, run the development server:
 
+## Step to get and running locally
+
 ```bash
+git clone https://github.com/dsti-sl/e-referral.git
+#or
+git clone git@github.com:dsti-sl/e-referral.git
+# cd to e-referral
+cd e-referral
+```
+
+# Setup node V20.15.0 (nvm or manually) [nvm setup](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating)
+
+```bash
+nvm install 20.15.0
+#Run
+npm install
+
+# start the project
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

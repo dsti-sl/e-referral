@@ -30,7 +30,7 @@ export function User() {
       <DropdownMenuTrigger>
         <Button
           onClick={() => {}}
-          className="bg-erefer-rose flex h-12 w-12 items-center justify-center rounded-full text-gray-700 hover:text-white"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-erefer-rose text-gray-700 hover:text-white"
         >
           {user?.image ? (
             <Image
@@ -49,11 +49,11 @@ export function User() {
         <DropdownMenuLabel> Tigidankay Bah </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Settings className="text-gray-700 hover:text-gray-900" />
+          <Settings className="pr-2 text-gray-700 hover:text-gray-900" />
           <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleLogout}>
-          <LogOut className="text-gray-700 hover:text-gray-900" />
+          <LogOut className="pr-2 text-gray-700 hover:text-gray-900" />
           <span>Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

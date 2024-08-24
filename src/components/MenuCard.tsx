@@ -17,13 +17,13 @@ export default function MenuCard({ onSelect }: MenuCardProps) {
   };
 
   return (
-    <div className="size-60 rounded-lg bg-black p-4 shadow-md">
+    <div className="w-35 h-60 rounded-lg bg-erefer-rose p-4 shadow-md">
       <h2 className="mb-4 text-lg font-semibold">Flows Menu </h2>
       <ul className="space-y-4">
         <li>
           <button
             onClick={() => handleSelect('Active')}
-            className={`text-left ${selected === 'Active' ? 'border-l-4 border-blue-500 pl-2' : 'pl-2'}`}
+            className={`text-left ${selected === 'Active' ? 'border-white-500 border-l-4 pl-2' : 'pl-2'}`}
           >
             <h3 className="font-regular">Active</h3>
           </button>
@@ -31,7 +31,7 @@ export default function MenuCard({ onSelect }: MenuCardProps) {
         <li>
           <button
             onClick={() => handleSelect('Draft')}
-            className={`text-center ${selected === 'Draft' ? 'border-l-4 border-blue-500 pl-2' : 'pl-2'}`}
+            className={`text-center ${selected === 'Draft' ? 'border-white-500 border-l-4 pl-2' : 'pl-2'}`}
           >
             <h3 className="font-regular">Draft</h3>
           </button>
@@ -39,7 +39,7 @@ export default function MenuCard({ onSelect }: MenuCardProps) {
         <li>
           <button
             onClick={() => handleSelect('Archived')}
-            className={`text-center ${selected === 'Archived' ? 'border-l-4 border-blue-500 pl-2' : 'pl-2'}`}
+            className={`text-center ${selected === 'Archived' ? 'border-white-500 border-l-4 pl-2' : 'pl-2'}`}
           >
             <h3 className="font-regular">Archived</h3>
           </button>
@@ -47,7 +47,7 @@ export default function MenuCard({ onSelect }: MenuCardProps) {
         <li>
           <button
             onClick={() => handleSelect('Deleted')}
-            className={`text-center ${selected === 'Deleted' ? 'border-l-4 border-blue-500 pl-2' : 'pl-2'}`}
+            className={`text-center ${selected === 'Deleted' ? 'border-white-500 border-l-4 pl-2' : 'pl-2'}`}
           >
             <h3 className="font-regular pr-2">Deleted</h3>
           </button>

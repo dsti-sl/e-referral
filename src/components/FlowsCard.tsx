@@ -5,7 +5,7 @@ interface FlowsCardProps {
 
 export default function FlowsCard({ status, flows }: FlowsCardProps) {
   return (
-    <div className="rounded-lg bg-white p-4 shadow-md">
+    <div className="rounded-lg p-4 shadow-md">
       <h2 className="mb-4 text-lg font-semibold text-black">{status} Flows</h2>
       <ul className="space-y-4">
         {flows.length > 0 ? (

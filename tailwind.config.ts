@@ -11,7 +11,10 @@ const config: Config = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+          'conic-gradient(from 0deg at 0% 0%, var(--tw-gradient-stops))',
+      },
+      colors: {
+        'erefer-rose': '#A85766',
       },
     },
   },

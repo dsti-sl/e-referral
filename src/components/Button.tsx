@@ -11,7 +11,7 @@ interface ButtonProps {
 export default function Button({ children, onClick, className }: ButtonProps) {
   return (
     <button
-      className={`rounded bg-blue-500 px-4 py-2 text-white hover:bg-white ${className}`}
+      className={`rounded bg-blue-500 px-4 py-2 text-white hover:text-white ${className}`}
       onClick={onClick}
     >
       {children}

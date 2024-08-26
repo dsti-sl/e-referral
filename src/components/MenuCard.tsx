@@ -17,7 +17,7 @@ export default function MenuCard({ onSelect }: MenuCardProps) {
   };
 
   return (
-    <div className="w-35 h-60 rounded-lg bg-erefer-rose p-4 shadow-md">
+    <div className="size-60 rounded-lg bg-erefer-rose p-4 shadow-md">
       <h2 className="mb-4 text-lg font-semibold">Flows Menu </h2>
       <ul className="space-y-4">
         <li>

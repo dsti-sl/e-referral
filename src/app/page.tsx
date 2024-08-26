@@ -1,3 +1,5 @@
+import { pages } from 'next/dist/build/templates/app-page';
+
 export default function Home() {
   return (
     <div className="flex h-screen flex-col items-center gap-20 p-24 text-black">

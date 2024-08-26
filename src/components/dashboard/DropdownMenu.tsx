@@ -22,7 +22,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 
   const options =
     type === 'period'
-      ? ['Daily', 'Last 24 Hours', 'Monthly'] // Updated option
+      ? ['Daily', 'Last 24 Hours', 'Monthly']
       : [
           'Medical Services',
           'Psychosocial support',

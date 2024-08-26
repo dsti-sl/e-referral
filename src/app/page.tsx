@@ -41,7 +41,7 @@ const data: Record<Service, Record<Period, number[]>> = {
     'Last 24 Hours': [45, 50, 48, 55, 65],
     Monthly: [170, 90, 40, 110, 80, 180, 175, 190, 200],
   },
-  'Education/ Training Services': {
+  'Education/Training Services': {
     Daily: [4, 12, 40, 9, 7, 11, 15],
     'Last 24 Hours': [30, 35, 32, 40, 45],
     Monthly: [110, 90, 40, 110, 80, 120, 115, 130, 140],

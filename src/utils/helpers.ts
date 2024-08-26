@@ -27,7 +27,7 @@ export type Service =
   | 'Case Management'
   | 'Protection/Shelter'
   | 'Further Support Protection/Shelter'
-  | 'Education/ Training Services'
+  | 'Education/Training Services'
   | 'Legal Aid'
   | 'Further Support Medical Services'
   | 'Further Support Psychosocial support'

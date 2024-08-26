@@ -30,7 +30,7 @@ export function User() {
       <DropdownMenuTrigger>
         <Button
           onClick={() => {}}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-erefer-rose text-gray-700 hover:text-white"
+          className="flex h-12 w-12 items-center justify-center rounded-full border-erefer-rose bg-erefer-rose text-gray-700 hover:border hover:text-white"
         >
           {user?.image ? (
             <Image

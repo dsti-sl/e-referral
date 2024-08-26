@@ -1,6 +1,5 @@
 // Layout specific to the "about" page route.
 import { ReactNode } from 'react';
-import Button from '@/components/Button';
 
 export default function FlowsLayout({ children }: { children: ReactNode }) {
   return (

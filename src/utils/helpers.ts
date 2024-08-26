@@ -15,3 +15,21 @@ export const getRandomColor = () => {
 export const generateColors = (count: number) => {
   return Array.from({ length: count }, () => getRandomColor());
 };
+
+// Update the Period type
+export type Period = 'Daily' | 'Last 24 Hours' | 'Monthly';
+
+export type Service =
+  | 'Medical Services'
+  | 'Psychosocial support'
+  | 'Police Services'
+  | 'Hotline'
+  | 'Case Management'
+  | 'Protection/Shelter'
+  | 'Further Support Protection/Shelter'
+  | 'Education/ Training Services'
+  | 'Legal Aid'
+  | 'Further Support Medical Services'
+  | 'Further Support Psychosocial support'
+  | 'Long Term Support Psychosocial support'
+  | 'Livelihood services';

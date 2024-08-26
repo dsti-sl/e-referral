@@ -22,7 +22,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
 
   const options =
     type === 'period'
-      ? ['Daily', 'Weekly', 'Monthly']
+      ? ['Daily', 'Last 24 Hours', 'Monthly'] // Updated option
       : [
           'Medical Services',
           'Psychosocial support',
@@ -30,11 +30,11 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
           'Hotline',
           'Case Management',
           'Protection/Shelter',
-          'Futher Support Protection/Shelter',
-          'Education/ Training Services',
+          'Further Support Protection/Shelter',
+          'Education/Training Services',
           'Legal Aid',
-          'Futher Support Medical Services',
-          'Futher Support Psychosocial support',
+          'Further Support Medical Services',
+          'Further Support Psychosocial support',
           'Long Term Support Psychosocial support',
           'Livelihood services',
         ];
@@ -55,9 +55,9 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="h-auto min-w-32 rounded bg-white p-2 shadow">
-        {options.map((option) => (
+        {options.map((option, indx) => (
           <DropdownMenuItem
-            key={option}
+            key={indx}
             className="h-auto w-auto cursor-pointer hover:bg-gray-200"
             onClick={() => onSelect(option)}
           >

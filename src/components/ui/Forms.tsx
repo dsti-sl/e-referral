@@ -31,39 +31,50 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 flex flex-col space-y-4">
-      {fields.map((field) => (
-        <div key={field.id} className="flex flex-col">
-          <label htmlFor={field.id} className="text-gray-700">
-            {field.label}
-          </label>
-          {field.type === 'textarea' ? (
-            <textarea
-              id={field.id}
-              placeholder={field.placeholder}
-              required={field.required}
-              onChange={handleChange}
-              className="min-h-[100px] w-full resize-none rounded-[7px] border border-gray-300 p-2 text-sm text-gray-700"
-            />
-          ) : (
-            <input
-              id={field.id}
-              type={field.type}
-              placeholder={field.placeholder}
-              required={field.required}
-              onChange={handleChange}
-              className="rounded border border-gray-300 p-2 text-sm text-gray-700"
-            />
-          )}
+    <>
+      <form onSubmit={handleSubmit} className="mt-8 flex flex-col space-y-4">
+        {fields.map((field) => (
+          <div key={field.id} className="flex flex-col">
+            <label htmlFor={field.id} className="text-gray-700">
+              {field.label}
+            </label>
+            {field.type === 'textarea' ? (
+              <textarea
+                id={field.id}
+                placeholder={field.placeholder}
+                required={field.required}
+                onChange={handleChange}
+                className="min-h-[100px] w-full resize-none rounded-[7px] border border-gray-300 p-2 text-sm text-gray-700"
+              />
+            ) : (
+              <input
+                id={field.id}
+                type={field.type}
+                placeholder={field.placeholder}
+                required={field.required}
+                onChange={handleChange}
+                className="rounded border border-gray-300 p-2 text-sm text-gray-700"
+              />
+            )}
+          </div>
+        ))}
+        <div className="flex justify-end space-x-4">
+          <button
+            type="submit"
+            className="w-6/12 rounded bg-erefer-rose px-4 py-2 text-white hover:bg-red-400 focus:outline-none"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            onClick={() => {}} // Add a cancel handler function
+            className="w-6/12 rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100 focus:outline-none"
+          >
+            Cancel
+          </button>
         </div>
-      ))}
-      <button
-        type="submit"
-        className="rounded bg-erefer-rose px-4 py-2 text-white hover:bg-red-400 focus:outline-none"
-      >
-        Save
-      </button>
-    </form>
+      </form>
+    </>
   );
 };
 

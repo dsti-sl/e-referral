@@ -43,13 +43,13 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave }) => {
             placeholder={field.placeholder}
             required={field.required}
             onChange={handleChange}
-            className="rounded border border-gray-300 p-2 text-sm text-gray-700"
+            className={`${field.type === 'textarea' ? 'min-h-[100px] w-full resize-none rounded-[7px] text-left align-top' : ''} rounded border border-gray-300 p-2 text-sm text-gray-700`}
           />
         </div>
       ))}
       <button
         type="submit"
-        className="rounded bg-erefer-rose px-4 py-2 text-white hover:bg-white focus:outline-none"
+        className="rounded bg-erefer-rose px-4 py-2 text-white hover:bg-red-400 focus:outline-none"
       >
         Save
       </button>

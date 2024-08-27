@@ -37,14 +37,24 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave }) => {
           <label htmlFor={field.id} className="text-gray-700">
             {field.label}
           </label>
-          <input
-            id={field.id}
-            type={field.type}
-            placeholder={field.placeholder}
-            required={field.required}
-            onChange={handleChange}
-            className={`${field.type === 'textarea' ? 'min-h-[100px] w-full resize-none rounded-[7px] text-left align-top' : ''} rounded border border-gray-300 p-2 text-sm text-gray-700`}
-          />
+          {field.type === 'textarea' ? (
+            <textarea
+              id={field.id}
+              placeholder={field.placeholder}
+              required={field.required}
+              onChange={handleChange}
+              className="min-h-[100px] w-full resize-none rounded-[7px] border border-gray-300 p-2 text-sm text-gray-700"
+            />
+          ) : (
+            <input
+              id={field.id}
+              type={field.type}
+              placeholder={field.placeholder}
+              required={field.required}
+              onChange={handleChange}
+              className="rounded border border-gray-300 p-2 text-sm text-gray-700"
+            />
+          )}
         </div>
       ))}
       <button

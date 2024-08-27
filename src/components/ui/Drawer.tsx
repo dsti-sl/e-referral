@@ -47,10 +47,7 @@ const Drawer: React.FC<DrawerProps> = ({
     <>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex">
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50"
-            onClick={onClose}
-          ></div>
+          <div className="fixed inset-0 bg-black bg-opacity-50"></div>
           <div
             className={`fixed ${positionClasses[position]} ${
               sizeClasses[size]

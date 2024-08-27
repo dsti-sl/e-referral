@@ -127,6 +127,10 @@ export default function FlowsPage() {
     localStorage.setItem('flowsData', JSON.stringify(flowsData));
   }, [flowsData]);
 
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+  };
+
   return (
     <div className="container mx-auto flex items-center justify-between">
       <div className="ph-20 w-1/4">
@@ -148,12 +152,16 @@ export default function FlowsPage() {
       </div>
       <Drawer
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={handleDrawerClose}
         size={drawerConfig.size}
         position={drawerConfig.position}
       >
         <h2 className="mb-4 text-lg font-semibold">Create New Flow</h2>
-        <Forms fields={formFields} onSave={handleSave} />
+        <Forms
+          onClose={handleDrawerClose}
+          fields={formFields}
+          onSave={handleSave}
+        />
       </Drawer>
     </div>
   );

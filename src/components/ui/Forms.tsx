@@ -11,9 +11,10 @@ export interface FormsField {
 interface FormsProps {
   fields: FormsField[];
   onSave: (data: { [key: string]: any }) => void;
+  onClose: () => void;
 }
 
-const Forms: React.FC<FormsProps> = ({ fields, onSave }) => {
+const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
   const [formState, setFormState] = useState<{ [key: string]: any }>({});
 
   const handleChange = (
@@ -67,7 +68,7 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave }) => {
           </button>
           <button
             type="button"
-            onClick={() => {}} // Add a cancel handler function
+            onClick={onClose} // Add a cancel handler function
             className="w-6/12 rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100 focus:outline-none"
           >
             Cancel

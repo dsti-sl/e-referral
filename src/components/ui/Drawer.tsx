@@ -1,4 +1,5 @@
 import React from 'react';
+import { X } from 'lucide-react';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -46,21 +47,18 @@ const Drawer: React.FC<DrawerProps> = ({
     <>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex">
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50"
-            onClick={onClose}
-          ></div>
+          <div className="fixed inset-0 bg-black bg-opacity-50"></div>
           <div
             className={`fixed ${positionClasses[position]} ${
               sizeClasses[size]
             } ${isOpen ? activeTranslateClasses[position] : translateClasses[position]} ${position === 'left' || position === 'right' ? 'h-full' : 'w-full'} bg-white p-4 shadow-xl transition-transform duration-300 ease-in-out`}
           >
-            <button
-              className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
-              onClick={onClose}
-            >
-              Close
-            </button>
+            <div>
+              <X
+                className="absolute left-2 top-2 mt-2 cursor-pointer text-gray-500 hover:text-gray-700"
+                onClick={onClose}
+              />
+            </div>
             {children}
           </div>
         </div>

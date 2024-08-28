@@ -71,6 +71,27 @@ export default function FlowsPage() {
       required: true,
     },
     {
+      id: 'status',
+      label: 'Status',
+      type: 'radio',
+      options: [
+        { label: 'Custom', value: 'custom' },
+        { label: 'Disabled', value: 'disabled' },
+      ],
+      required: true,
+    },
+    {
+      id: 'priority',
+      label: 'Priority',
+      type: 'select',
+      options: [
+        { label: 'High Level', value: 'high' },
+        { label: 'Mid Level', value: 'mid' },
+        { label: 'Low Level', value: 'low' },
+      ],
+      required: true,
+    },
+    {
       id: 'description',
       label: 'Description',
       type: 'textarea',
@@ -78,10 +99,17 @@ export default function FlowsPage() {
       required: true,
     },
     {
-      id: 'startDate',
-      label: 'Start Date',
-      type: 'date',
-      placeholder: '',
+      id: 'terminate',
+      label: '',
+      type: 'radio',
+      options: [{ label: 'Terminate', value: 'terminate' }],
+      required: true,
+    },
+    {
+      id: 'validate',
+      label: '',
+      type: 'radio',
+      options: [{ label: 'Validate', value: 'validate' }],
       required: true,
     },
   ];
@@ -120,6 +148,10 @@ export default function FlowsPage() {
     localStorage.setItem('flowsData', JSON.stringify(flowsData));
   }, [flowsData]);
 
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+  };
+
   return (
     <div className="container mx-auto flex items-center justify-between">
       <div className="ph-20 w-1/4">
@@ -138,12 +170,16 @@ export default function FlowsPage() {
       </div>
       <Drawer
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={handleDrawerClose}
         size={drawerConfig.size}
         position={drawerConfig.position}
       >
         <h2 className="mb-4 text-lg font-semibold">Create New Flow</h2>
-        <Forms fields={formFields} onSave={handleSave} />
+        <Forms
+          onClose={handleDrawerClose}
+          fields={formFields}
+          onSave={handleSave}
+        />
       </Drawer>
     </div>
   );

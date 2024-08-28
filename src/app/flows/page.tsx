@@ -71,6 +71,27 @@ export default function FlowsPage() {
       required: true,
     },
     {
+      id: 'status',
+      label: 'Status',
+      type: 'radio',
+      options: [
+        { label: 'Custom', value: 'custom' },
+        { label: 'Disabled', value: 'disabled' },
+      ],
+      required: true,
+    },
+    {
+      id: 'priority',
+      label: 'Priority',
+      type: 'select',
+      options: [
+        { label: 'High Level', value: 'high' },
+        { label: 'Mid Level', value: 'mid' },
+        { label: 'Low Level', value: 'low' },
+      ],
+      required: true,
+    },
+    {
       id: 'description',
       label: 'Description',
       type: 'textarea',
@@ -78,10 +99,17 @@ export default function FlowsPage() {
       required: true,
     },
     {
-      id: 'startDate',
-      label: 'Start Date',
-      type: 'date',
-      placeholder: '',
+      id: 'terminate',
+      label: '',
+      type: 'radio',
+      options: [{ label: 'Terminate', value: 'terminate' }],
+      required: true,
+    },
+    {
+      id: 'validate',
+      label: '',
+      type: 'radio',
+      options: [{ label: 'Validate', value: 'validate' }],
       required: true,
     },
   ];

@@ -65,14 +65,14 @@ export default function FlowsPage() {
   const formFields: FormsField[] = [
     {
       id: 'name',
-      label: 'Name/Title',
+      label: 'Name/Title*',
       type: 'text',
       placeholder: 'Enter flow name',
       required: true,
     },
     {
       id: 'status',
-      label: 'Status',
+      label: 'Status*',
       type: 'radio',
       options: [
         { label: 'Custom', value: 'custom' },
@@ -93,7 +93,7 @@ export default function FlowsPage() {
     },
     {
       id: 'description',
-      label: 'Description',
+      label: 'Description*',
       type: 'textarea',
       placeholder: 'Enter flow description',
       required: true,
@@ -103,14 +103,12 @@ export default function FlowsPage() {
       label: '',
       type: 'radio',
       options: [{ label: 'Terminate', value: 'terminate' }],
-      required: true,
     },
     {
       id: 'validate',
       label: '',
       type: 'radio',
       options: [{ label: 'Validate', value: 'validate' }],
-      required: true,
     },
   ];
 

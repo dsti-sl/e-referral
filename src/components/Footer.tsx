@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="text-gray-400">
       <div className="px-4 sm:px-12 md:flex md:items-center md:justify-between">
-        <h1 className="md:mb:-0 mb-6 lg:leading-normal">
+        <h1 className="md:mb:-0 lg:leading-normal">
           <a href="www.dsti.gov.sl">Abous Us</a>
         </h1>
         <h1 className="mb-4 mr-1 w-full py-2.5 sm:mr-5 sm:w-72 lg:mb-0">

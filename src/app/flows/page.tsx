@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import MenuCard from '@/components/MenuCard';
 import FlowsCard from '@/components/FlowsCard';
 import Button from '@/components/Button';
-import { Plus } from 'lucide-react';
 import Drawer from '@/components/ui/Drawer';
 import Forms, { FormsField } from '@/components/ui/Forms';
 
@@ -12,7 +12,6 @@ export default function FlowsPage() {
   const [selectedStatus, setSelectedStatus] = useState<
     'Active' | 'Draft' | 'Archived' | 'Deleted'
   >('Active');
-
   const [flowsData, setFlowsData] = useState({
     Active: [
       {
@@ -54,7 +53,6 @@ export default function FlowsPage() {
     ],
   });
 
-  // Drawer configuration
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [drawerConfig, setDrawerConfig] = useState<{
     size: 'small' | 'medium' | 'large';
@@ -64,7 +62,6 @@ export default function FlowsPage() {
     position: 'right',
   });
 
-  // Dynamic form configuration using the custom Forms component
   const formFields: FormsField[] = [
     {
       id: 'name',
@@ -89,7 +86,6 @@ export default function FlowsPage() {
     },
   ];
 
-  // Handling drawer toggle when the "Create Flow" button is clicked.
   const handleDrawerToggle = (
     size: 'small' | 'medium' | 'large',
     position: 'left' | 'right' | 'top' | 'bottom',
@@ -115,12 +111,9 @@ export default function FlowsPage() {
     setIsDrawerOpen(false);
   };
 
-  // Fetching saved flows data from local storage on page load.
   useEffect(() => {
     const savedFlowsData = localStorage.getItem('flowsData');
-    if (savedFlowsData) {
-      setFlowsData(JSON.parse(savedFlowsData));
-    }
+    if (savedFlowsData) setFlowsData(JSON.parse(savedFlowsData));
   }, []);
 
   useEffect(() => {
@@ -137,12 +130,9 @@ export default function FlowsPage() {
       </div>
       <div className="fixed right-24 top-24 py-4 pl-20">
         <Button
-          onClick={() => {
-            handleDrawerToggle('medium', 'right');
-          }}
+          onClick={() => handleDrawerToggle('medium', 'right')}
           className="rounded-18 flex items-center gap-1 bg-black px-2 py-2 text-white hover:bg-white hover:text-black"
         >
-          <Plus className="h-5 w-5" />
           <span> Create Flow </span>
         </Button>
       </div>

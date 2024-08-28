@@ -27,6 +27,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
+import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -57,6 +58,9 @@ export default function RootLayout({
             <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
               {children}
             </main>
+            <div className="h-25 w-full bg-black">
+              <Footer />
+            </div>
           </div>
         </div>
       </body>

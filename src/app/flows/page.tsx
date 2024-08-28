@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import MenuCard from '@/components/MenuCard';
 import FlowsCard from '@/components/FlowsCard';
 import Button from '@/components/Button';
-import { Plus } from 'lucide-react';
 import Drawer from '@/components/ui/Drawer';
 import Forms, { FormsField } from '@/components/ui/Forms';
 
@@ -134,8 +133,7 @@ export default function FlowsPage() {
           onClick={() => handleDrawerToggle('medium', 'right')}
           className="rounded-18 flex items-center gap-1 bg-black px-2 py-2 text-white hover:bg-white hover:text-black"
         >
-          <Plus className="h-5 w-5" />
-          <span>Create Flow</span>
+          <span> Create Flow </span>
         </Button>
       </div>
       <Drawer

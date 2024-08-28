@@ -1,120 +1,118 @@
 'use client';
 
-import { useState } from 'react';
-import { SwimlaneFlow } from '@liangfaan/reactflow-swimlane';
-import { ReactFlowProvider } from 'reactflow';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Drawer from '@/components/ui/Drawer';
 import Button from '@/components/Button';
 import Forms, { FormsField } from '@/components/ui/Forms';
-import Link from 'next/link';
-import 'reactflow/dist/style.css';
 
 interface NodeData {
-  id: number;
-  title: string;
-  parentId?: number;
+  id: string;
+  label: string;
+  parentId?: string;
 }
 
-export default function FlowCanvas() {
-  const [nodes, setNodes] = useState<NodeData[][]>([[], [], [], [], []]);
+interface Column {
+  id: string;
+  title: string;
+  nodes: NodeData[];
+}
+
+const initialColumns: Column[] = [
+  { id: 'col-1', title: 'Intialised Flow', nodes: [] },
+  { id: 'col-2', title: 'Stage One', nodes: [] },
+  { id: 'col-3', title: 'Stage Two', nodes: [] },
+  { id: 'col-4', title: 'Stage Three', nodes: [] },
+  { id: 'col-5', title: 'Stage Four', nodes: [] },
+];
+
+const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
+  const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [currentColumn, setCurrentColumn] = useState<number | null>(null);
-  const [activeColumns, setActiveColumns] = useState([
-    true,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const [currentColumnId, setCurrentColumnId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // When the API is ready, we will use this to fetch or initialize the flow
+    console.log('Flow ID:', flowId);
+  }, [flowId]);
 
   const formFields: FormsField[] = [
     {
-      id: 'title',
-      label: 'Title',
+      id: 'label',
+      label: 'Node Label',
       type: 'text',
-      placeholder: 'Enter stage title',
+      placeholder: 'Enter node label',
       required: true,
     },
   ];
 
-  const handleNodeClick = (columnIndex: number, node: NodeData) => {
-    const newActiveColumns = [...activeColumns];
-    if (columnIndex + 1 < activeColumns.length) {
-      newActiveColumns[columnIndex + 1] = true;
-    }
-    setActiveColumns(newActiveColumns);
-    setCurrentColumn(columnIndex + 1);
+  const handleNodeClick = (columnId: string) => {
+    setCurrentColumnId(columnId);
+    setIsDrawerOpen(true); // click event that triggers node drawer
   };
 
-  const handleAddNode = (data: { title: string }) => {
-    if (currentColumn === null || currentColumn >= nodes.length) return;
+  const handleAddNode = (data: { label: string }) => {
+    if (!currentColumnId) return;
 
     const newNode: NodeData = {
-      id: Date.now(),
-      title: data.title,
-      parentId:
-        currentColumn > 0
-          ? nodes[currentColumn - 1].slice(-1)[0]?.id
-          : undefined,
+      id: `${Date.now()}`,
+      label: data.label,
     };
 
-    setNodes((prevNodes) => {
-      const newNodes = [...prevNodes];
-      newNodes[currentColumn].push(newNode);
-      return newNodes;
-    });
+    setColumns((prevColumns) =>
+      prevColumns.map((column) =>
+        column.id === currentColumnId
+          ? { ...column, nodes: [...column.nodes, newNode] }
+          : column,
+      ),
+    );
 
     setIsDrawerOpen(false);
-    setCurrentColumn(null);
+    setCurrentColumnId(null);
   };
 
   return (
-    <div style={{ height: 800 }}>
-      <Link href="/flows" className="text-sm text-gray-500 hover:text-black">
+    <div className="h-screen w-full p-8">
+      <Link href="/flows" className="text-sm text-gray-900 hover:text-black">
         Back to Flows
       </Link>
-      <h1 className="mb-6 text-2xl font-bold">Flow Artboard</h1>
-      <div className="h-full w-full">
-        <ReactFlowProvider>
-          <SwimlaneFlow
-            rankDirection="LR"
-            selectedFlow={{
-              id: 'USSD Flow',
-              swimlanes: nodes.map((column, columnIndex) => ({
-                id: `Column-${columnIndex}`,
-                label: `Column ${columnIndex + 1}`,
-                layer: columnIndex,
-                nodes: column.map((node) => ({
-                  id: node.id.toString(),
-                  label: node.title,
-                  name: node.title,
-                  onClick: () => handleNodeClick(columnIndex, node),
-                })),
-              })),
-              edges: nodes.flatMap((column, columnIndex) =>
-                columnIndex === 0
-                  ? []
-                  : column.map((node) => ({
-                      id: `edge-${node.id}`,
-                      sourceNodeId: nodes[columnIndex - 1]
-                        .find((parentNode) => parentNode.id === node.parentId)
-                        ?.id.toString(),
-                      targetNodeId: node.id.toString(),
-                    })),
-              ),
-            }}
-          />
-        </ReactFlowProvider>
+      <h1 className="mb-6 text-2xl font-bold text-black">
+        Flow Artboard for Flow {flowId}
+      </h1>
+
+      <div className="grid grid-cols-5 gap-4">
+        {columns.map((column) => (
+          <div
+            key={column.id}
+            className="rounded-lg border bg-blue-800 p-4 shadow"
+          >
+            <h2 className="text-lg font-semibold">{column.title}</h2>
+            <ul className="mt-4 space-y-2">
+              {column.nodes.map((node) => (
+                <li
+                  key={node.id}
+                  className="cursor-pointer rounded border bg-rose-500 p-2 shadow hover:bg-rose-900"
+                  onClick={() => handleNodeClick(column.id)}
+                >
+                  {node.label}
+                </li>
+              ))}
+            </ul>
+            {column.nodes.length === 0 && (
+              <p className="text-white-900 text-center text-sm">
+                No nodes yet.
+              </p>
+            )}
+            <Button
+              onClick={() => handleNodeClick(column.id)}
+              className="mt-2 w-full"
+            >
+              Add Node to {column.title}
+            </Button>
+          </div>
+        ))}
       </div>
-      {activeColumns.some((isActive) => isActive) && (
-        <Button
-          onClick={() => setIsDrawerOpen(true)}
-          disabled={currentColumn === null}
-          className="mt-4"
-        >
-          Add Node
-        </Button>
-      )}
+
       <Drawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
@@ -126,4 +124,6 @@ export default function FlowCanvas() {
       </Drawer>
     </div>
   );
-}
+};
+
+export default FlowCanvas;

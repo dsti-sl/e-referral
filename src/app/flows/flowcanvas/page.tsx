@@ -38,11 +38,51 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
 
   const formFields: FormsField[] = [
     {
-      id: 'label',
-      label: 'Node Label',
+      id: 'title',
+      label: 'Name/Title*',
       type: 'text',
-      placeholder: 'Enter node label',
+      placeholder: 'Enter flow name',
       required: true,
+    },
+    {
+      id: 'status',
+      label: 'Status*',
+      type: 'radio',
+      options: [
+        { label: 'Custom', value: 'custom' },
+        { label: 'Disabled', value: 'disabled' },
+      ],
+      required: true,
+    },
+    {
+      id: 'priority',
+      label: 'Priority',
+      type: 'select',
+      options: [
+        { label: 'High Level', value: 'high' },
+        { label: 'Mid Level', value: 'mid' },
+        { label: 'Low Level', value: 'low' },
+      ],
+      required: true,
+    },
+    {
+      id: 'description',
+      label: 'Description*',
+      type: 'textarea',
+      placeholder: 'Enter flow description',
+      required: true,
+    },
+    {
+      id: 'terminate',
+      label: '',
+      type: 'radio',
+      options: [{ label: 'Terminate', value: 'terminate' }],
+    },
+    {
+      id: 'validate',
+      label: '',
+      type: 'radio',
+      options: [{ label: 'Validate', value: 'validate' }],
     },
   ];
 
@@ -153,6 +193,11 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
 
   const flowPathNodes = getFlowPathNodes();
 
+  // close drawer
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+  };
+
   return (
     <div className="h-screen w-full p-8">
       <Link href="/flows" className="text-sm text-gray-900 hover:text-black">
@@ -170,7 +215,7 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
               column.isActive ? 'bg-blue-800' : 'bg-gray-300'
             }`}
           >
-            <h2 className="text-lg font-semibold text-white">{column.title}</h2>
+            <h2 className="text-lg font-semibold text-white">{column.nodes}</h2>
             <ul className="mt-4 space-y-2">
               {getFilteredNodes(column.id).map((node) => (
                 <li
@@ -216,6 +261,7 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
         <Forms
           fields={formFields}
           onSave={handleAddOrEditNode}
+          onClose={handleDrawerClose}
           initialData={nodeToEdit ? { label: nodeToEdit.label } : undefined}
         />
       </Drawer>

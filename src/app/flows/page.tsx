@@ -151,11 +151,11 @@ export default function FlowsPage() {
   };
 
   return (
-    <div className="container mx-auto flex items-center justify-between">
-      <div className="ph-20 w-1/4">
+    <div className="container mx-auto flex flex-col items-center justify-between sm:w-full md:flex-row">
+      <div className="ph-20 sm:w-full md:w-1/4 lg:w-1/4">
         <MenuCard onSelect={setSelectedStatus} />
       </div>
-      <div className="w-3/4">
+      <div className="sm:mt-4 sm:w-full md:ml-2 md:w-3/4 lg:w-3/4">
         <FlowsCard status={selectedStatus} flows={flowsData[selectedStatus]} />
       </div>
       <div className="fixed right-24 top-24 py-4 pl-20">

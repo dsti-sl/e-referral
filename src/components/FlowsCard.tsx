@@ -55,7 +55,9 @@ export default function FlowsCard({ status, flows }: FlowsCardProps) {
                     checked={activeStates[flow.id]}
                     onChange={() => handleToggle(flow.id)}
                   />
-                  <span className="mr-6 text-sm text-gray-700">Active:</span>
+                  <span className="mr-6 text-sm text-gray-700">
+                    {activeStates[flow.id] == true ? 'Deactivate' : 'Activate'}
+                  </span>
                   <div
                     className={`relative mr-4 inline-flex h-6 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
                       activeStates[flow.id] ? 'bg-erefer-rose' : 'bg-gray-300'

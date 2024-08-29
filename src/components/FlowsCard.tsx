@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface FlowsCardProps {
   status: 'Active' | 'Draft' | 'Archived' | 'Deleted';
@@ -11,15 +12,33 @@ interface FlowsCardProps {
 }
 
 export default function FlowsCard({ status, flows }: FlowsCardProps) {
+  // State to track the active status of each flow by its ID
+  const [activeStates, setActiveStates] = useState<Record<number, boolean>>(
+    flows.reduce(
+      (acc, flow) => {
+        acc[flow.id] = status === 'Active';
+        return acc;
+      },
+      {} as Record<number, boolean>,
+    ),
+  );
+
+  const handleToggle = (id: number) => {
+    setActiveStates((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
+  };
+
   return (
-    <div className="rounded-lg p-4 shadow-md">
+    <div className="card rounded-lg bg-white p-4 shadow-md">
       <h2 className="mb-4 text-lg font-semibold text-black">{status} Flows</h2>
       <ul className="space-y-4">
         {flows.length > 0 ? (
           flows.map((flow) => (
             <li
               key={flow.id}
-              className="rounded border p-4 hover:border-gray-200 hover:bg-erefer-rose"
+              className="rounded border p-4 hover:border-gray-200 hover:bg-gray-200"
             >
               <Link
                 href={`/flows/flowcanvas?flowId=${flow.id}`} // Passing the flowId as a query parameter
@@ -27,7 +46,33 @@ export default function FlowsCard({ status, flows }: FlowsCardProps) {
               >
                 {flow.name}
               </Link>
-              <p className="text-sm text-gray-500">Status: {status}</p>
+              <div className="mt-2 flex items-center justify-between">
+                <p className="text-sm text-gray-500">Status: {status}</p>
+                <label className="flex cursor-pointer items-center">
+                  <input
+                    type="checkbox"
+                    className="toggle-checkbox sr-only"
+                    checked={activeStates[flow.id]}
+                    onChange={() => handleToggle(flow.id)}
+                  />
+                  <span className="mr-6 text-sm text-gray-700">
+                    {activeStates[flow.id] == true ? 'Deactivate' : 'Activate'}
+                  </span>
+                  <div
+                    className={`relative mr-4 inline-flex h-6 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
+                      activeStates[flow.id] ? 'bg-erefer-rose' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                        activeStates[flow.id]
+                          ? 'translate-x-6'
+                          : 'translate-x-0'
+                      }`}
+                    />
+                  </div>
+                </label>
+              </div>
             </li>
           ))
         ) : (

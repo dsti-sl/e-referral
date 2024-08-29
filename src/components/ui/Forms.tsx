@@ -11,11 +11,12 @@ export interface FormsField {
     | 'email'
     | 'password'
     | 'date'
+    | 'checkbox'
     | 'radio'
     | 'select';
   placeholder?: string;
   required?: boolean;
-  options?: { label: string; value: string }[]; // Add this for radio and dropdown options
+  options?: { label: string; value: string }[];
 }
 
 interface FormsProps {
@@ -26,16 +27,53 @@ interface FormsProps {
 
 const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
   const [formState, setFormState] = useState<{ [key: string]: any }>({});
+  const [dynamicFields, setDynamicFields] = useState<FormsField[]>([]);
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
-    setFormState({
-      ...formState,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value, type, checked }: any = e.target;
+    setFormState((prevState) => ({
+      ...prevState,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+
+    // Conditionally add fields based on checkbox selections
+    if (name === 'terminate' && checked) {
+      setDynamicFields((prevFields) => [
+        ...prevFields,
+        {
+          id: 'terminateUrl',
+          label: 'Terminate URL*',
+          type: 'text',
+          placeholder: 'Enter terminate URL',
+          required: true,
+        },
+      ]);
+    } else if (name === 'terminate' && !checked) {
+      setDynamicFields((prevFields) =>
+        prevFields.filter((field) => field.id !== 'terminateUrl'),
+      );
+    }
+
+    if (name === 'validate' && checked) {
+      setDynamicFields((prevFields) => [
+        ...prevFields,
+        {
+          id: 'validateUrl',
+          label: 'Validate URL*',
+          type: 'text',
+          placeholder: 'Enter validate URL',
+          required: true,
+        },
+      ]);
+    } else if (name === 'validate' && !checked) {
+      setDynamicFields((prevFields) =>
+        prevFields.filter((field) => field.id !== 'validateUrl'),
+      );
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,9 +82,11 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
     onSave(formState);
   };
 
+  const allFields = [...fields, ...dynamicFields];
+
   return (
     <form onSubmit={handleSubmit} className="mt-8 flex flex-col space-y-4">
-      {fields.map((field) => (
+      {allFields.map((field) => (
         <div key={field.id} className="flex flex-col">
           <label htmlFor={field.id} className="text-gray-700">
             {field.label}
@@ -60,17 +100,17 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
               onChange={handleChange}
               className="min-h-[100px] w-full resize-none rounded-[7px] border border-gray-300 p-2 text-sm text-gray-700"
             />
-          ) : field.type === 'radio' && field.options ? (
+          ) : field.type === 'checkbox' && field.options ? (
             <div className="flex space-x-4">
               {field.options.map((option) => (
                 <div key={option.value} className="flex items-center space-x-2">
                   <input
-                    type="radio"
+                    type="checkbox"
                     id={`${field.id}-${option.value}`}
                     name={field.id}
                     value={option.value}
                     onChange={handleChange}
-                    className="form-radio"
+                    className="form-checkbox"
                   />
                   <label
                     htmlFor={`${field.id}-${option.value}`}
@@ -89,7 +129,7 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
               onChange={handleChange}
               className="rounded border border-gray-300 p-2 text-sm text-gray-700"
             >
-              <option value="">Select {field.label}</option>
+              <option value="">Select {field.id}</option>
               {field.options.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}

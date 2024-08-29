@@ -64,53 +64,59 @@ export default function FlowsPage() {
 
   const formFields: FormsField[] = [
     {
+      id: 'message',
+      label: 'Message*',
+      type: 'text',
+      placeholder: 'Enter flow message',
+      required: true,
+    },
+    {
+      id: 'custom_feedback',
+      label: '',
+      type: 'checkbox',
+      options: [
+        {
+          label: 'Allow Custom Input (Allowing users to enter custom input)',
+          value: 'custom_feedback',
+        },
+      ],
+    },
+    {
       id: 'name',
-      label: 'Name/Title',
+      label: 'Name/Title*',
       type: 'text',
       placeholder: 'Enter flow name',
       required: true,
     },
     {
-      id: 'status',
-      label: 'Status',
-      type: 'radio',
-      options: [
-        { label: 'Custom', value: 'custom' },
-        { label: 'Disabled', value: 'disabled' },
-      ],
-      required: true,
-    },
-    {
       id: 'priority',
-      label: 'Priority',
+      label: 'Priority*',
       type: 'select',
       options: [
-        { label: 'High Level', value: 'high' },
-        { label: 'Mid Level', value: 'mid' },
-        { label: 'Low Level', value: 'low' },
+        { label: '1', value: '1' },
+        { label: '2', value: '2' },
+        { label: '3', value: '3' },
       ],
       required: true,
     },
     {
       id: 'description',
-      label: 'Description',
+      label: 'Description*',
       type: 'textarea',
-      placeholder: 'Enter flow description',
+      placeholder: 'Enter description about the flow',
       required: true,
     },
     {
       id: 'terminate',
       label: '',
-      type: 'radio',
+      type: 'checkbox',
       options: [{ label: 'Terminate', value: 'terminate' }],
-      required: true,
     },
     {
       id: 'validate',
       label: '',
-      type: 'radio',
+      type: 'checkbox',
       options: [{ label: 'Validate', value: 'validate' }],
-      required: true,
     },
   ];
 
@@ -153,11 +159,11 @@ export default function FlowsPage() {
   };
 
   return (
-    <div className="container mx-auto flex items-center justify-between">
-      <div className="ph-20 w-1/4">
+    <div className="container mx-auto flex flex-col items-center justify-between sm:w-full md:flex-row">
+      <div className="ph-20 sm:w-full md:w-1/4 lg:w-1/4">
         <MenuCard onSelect={setSelectedStatus} />
       </div>
-      <div className="w-3/4">
+      <div className="sm:mt-4 sm:w-full md:ml-2 md:w-3/4 lg:w-3/4">
         <FlowsCard status={selectedStatus} flows={flowsData[selectedStatus]} />
       </div>
       <div className="fixed right-24 top-24 py-4 pl-20">

@@ -64,6 +64,24 @@ export default function FlowsPage() {
 
   const formFields: FormsField[] = [
     {
+      id: 'message',
+      label: 'Message*',
+      type: 'text',
+      placeholder: 'Enter flow message',
+      required: true,
+    },
+    {
+      id: 'custom_feedback',
+      label: '',
+      type: 'checkbox',
+      options: [
+        {
+          label: 'Allow Custom Input (Allowing users to enter custom input)',
+          value: 'custom_feedback',
+        },
+      ],
+    },
+    {
       id: 'name',
       label: 'Name/Title*',
       type: 'text',
@@ -71,23 +89,13 @@ export default function FlowsPage() {
       required: true,
     },
     {
-      id: 'status',
-      label: 'Status*',
-      type: 'radio',
-      options: [
-        { label: 'Custom', value: 'custom' },
-        { label: 'Disabled', value: 'disabled' },
-      ],
-      required: true,
-    },
-    {
       id: 'priority',
-      label: 'Priority',
+      label: 'Priority*',
       type: 'select',
       options: [
-        { label: 'High Level', value: 'high' },
-        { label: 'Mid Level', value: 'mid' },
-        { label: 'Low Level', value: 'low' },
+        { label: '1', value: '1' },
+        { label: '2', value: '2' },
+        { label: '3', value: '3' },
       ],
       required: true,
     },
@@ -95,19 +103,19 @@ export default function FlowsPage() {
       id: 'description',
       label: 'Description*',
       type: 'textarea',
-      placeholder: 'Enter flow description',
+      placeholder: 'Enter description about the flow',
       required: true,
     },
     {
       id: 'terminate',
       label: '',
-      type: 'radio',
+      type: 'checkbox',
       options: [{ label: 'Terminate', value: 'terminate' }],
     },
     {
       id: 'validate',
       label: '',
-      type: 'radio',
+      type: 'checkbox',
       options: [{ label: 'Validate', value: 'validate' }],
     },
   ];

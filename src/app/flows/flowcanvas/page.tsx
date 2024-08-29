@@ -177,9 +177,9 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
                   key={node.id}
                   className={`cursor-pointer rounded border p-2 shadow ${
                     flowPathNodes.includes(node.id)
-                      ? 'bg-yellow-300' // Highlight nodes in the flow path
+                      ? 'bg-green-300'
                       : selectedNodeId === node.id
-                        ? 'bg-green-500' // Highlight the selected node
+                        ? 'bg-green-500'
                         : 'bg-black hover:bg-gray-100'
                   }`}
                   onClick={() => handleNodeClick(column.id, node.id)}

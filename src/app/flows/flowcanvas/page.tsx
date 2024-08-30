@@ -50,7 +50,7 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
       label: 'Priority*',
       type: 'select',
       options: [
-        { label: 'High', value: '1' },
+        { label: 'One', value: '1' },
         { label: 'Medium', value: '2' },
         { label: 'Low', value: '3' },
       ],

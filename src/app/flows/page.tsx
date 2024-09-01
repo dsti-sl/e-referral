@@ -76,7 +76,8 @@ export default function FlowsPage() {
       type: 'checkbox',
       options: [
         {
-          label: 'Allow Custom Input (Allowing users to enter custom input)',
+          label: 'Allow Custom Input ',
+          labelDescription: '(Allowing users to enter custom input)',
           value: 'custom_feedback',
         },
       ],
@@ -91,19 +92,14 @@ export default function FlowsPage() {
     {
       id: 'priority',
       label: 'Priority*',
-      type: 'select',
-      options: [
-        { label: '1', value: '1' },
-        { label: '2', value: '2' },
-        { label: '3', value: '3' },
-      ],
+      type: 'number',
       required: true,
     },
     {
       id: 'description',
       label: 'Description*',
       type: 'textarea',
-      placeholder: 'Enter description about the flow',
+      placeholder: 'Enter detiail description about the flow',
       required: true,
     },
     {

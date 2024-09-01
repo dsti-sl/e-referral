@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 export interface FormsField {
   id: string;
   label: string;
+
   type:
     | 'text'
     | 'textarea'
@@ -16,7 +17,7 @@ export interface FormsField {
     | 'select';
   placeholder?: string;
   required?: boolean;
-  options?: { label: string; value: string }[];
+  options?: { label: string; value: string; labelDescription?: string }[];
 }
 
 interface FormsProps {
@@ -116,7 +117,10 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
                     htmlFor={`${field.id}-${option.value}`}
                     className="text-gray-700"
                   >
-                    {option.label}
+                    {option.label}{' '}
+                    <span className="text-ellipsis text-xs">
+                      {option.labelDescription}
+                    </span>
                   </label>
                 </div>
               ))}

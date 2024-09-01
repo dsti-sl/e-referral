@@ -1,7 +1,5 @@
 'use client';
-
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect, useCallback } from 'react';
 import MenuCard from '@/components/MenuCard';
 import FlowsCard from '@/components/FlowsCard';
 import Button from '@/components/Button';
@@ -12,47 +10,12 @@ export default function FlowsPage() {
   const [selectedStatus, setSelectedStatus] = useState<
     'Active' | 'Draft' | 'Archived' | 'Deleted'
   >('Active');
-  const [flowsData, setFlowsData] = useState({
-    Active: [
-      {
-        id: 1,
-        name: 'Flow 1',
-        description: 'Description 1',
-        startDate: '2024-01-01',
-      },
-      {
-        id: 2,
-        name: 'Flow 2',
-        description: 'Description 2',
-        startDate: '2024-01-02',
-      },
-    ],
-    Draft: [
-      {
-        id: 3,
-        name: 'Flow 3',
-        description: 'Description 3',
-        startDate: '2024-02-01',
-      },
-    ],
-    Archived: [
-      {
-        id: 4,
-        name: 'Flow 4',
-        description: 'Description 4',
-        startDate: '2024-03-01',
-      },
-    ],
-    Deleted: [
-      {
-        id: 5,
-        name: 'Flow 5',
-        description: 'Description 5',
-        startDate: '2024-04-01',
-      },
-    ],
+  const [flowsData, setFlowsData] = useState<{ [key: string]: any[] }>({
+    Active: [],
+    Draft: [],
+    Archived: [],
+    Deleted: [],
   });
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [drawerConfig, setDrawerConfig] = useState<{
     size: 'small' | 'medium' | 'large';
@@ -61,6 +24,8 @@ export default function FlowsPage() {
     size: 'medium',
     position: 'right',
   });
+
+  const BaseUrl = process.env.BASE_URL;
 
   const formFields: FormsField[] = [
     {
@@ -71,14 +36,14 @@ export default function FlowsPage() {
       required: true,
     },
     {
-      id: 'custom_feedback',
+      id: 'allow_custom_feedback',
       label: '',
       type: 'checkbox',
       options: [
         {
           label: 'Allow Custom Input ',
           labelDescription: '(Allowing users to enter custom input)',
-          value: 'custom_feedback',
+          value: 'allow_custom_feedback',
         },
       ],
     },
@@ -99,7 +64,7 @@ export default function FlowsPage() {
       id: 'description',
       label: 'Description*',
       type: 'textarea',
-      placeholder: 'Enter detiail description about the flow',
+      placeholder: 'Enter detailed description about the flow',
       required: true,
     },
     {
@@ -116,43 +81,99 @@ export default function FlowsPage() {
     },
   ];
 
-  const handleDrawerToggle = (
-    size: 'small' | 'medium' | 'large',
-    position: 'left' | 'right' | 'top' | 'bottom',
-  ) => {
-    setDrawerConfig({ size, position });
-    setIsDrawerOpen(true);
-  };
+  // Function to toggle the drawer
+  const handleDrawerToggle = useCallback(
+    (
+      size: 'small' | 'medium' | 'large',
+      position: 'left' | 'right' | 'top' | 'bottom',
+    ) => {
+      setDrawerConfig({ size, position });
+      setIsDrawerOpen(true);
+    },
+    [],
+  );
 
-  const handleSave = (data: { [key: string]: any }) => {
-    const newFlowId = Date.now();
-    const newFlow = {
-      id: newFlowId,
-      name: data.name,
-      description: data.description,
-      startDate: data.startDate,
-    };
-
-    setFlowsData((prevData) => ({
-      ...prevData,
-      Active: [...prevData.Active, newFlow],
-    }));
-
+  // Function to handle closing the drawer
+  const handleDrawerClose = useCallback(() => {
     setIsDrawerOpen(false);
-  };
-
-  useEffect(() => {
-    const savedFlowsData = localStorage.getItem('flowsData');
-    if (savedFlowsData) setFlowsData(JSON.parse(savedFlowsData));
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('flowsData', JSON.stringify(flowsData));
-  }, [flowsData]);
+  // Function to handle saving new flow
+  const handleSave = useCallback(
+    async (data: { [key: string]: any }) => {
+      const newFlow = {
+        name: data.name,
+        message: data.message,
+        description: data.description,
+        priority: data.priority,
+        allow_custom_feedback: data.allow_custom_feedback || false,
+        validator: data.validator || null,
+        terminator: data.terminator || null,
+      };
 
-  const handleDrawerClose = () => {
-    setIsDrawerOpen(false);
-  };
+      try {
+        const response = await fetch(`${BaseUrl}/flows`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newFlow),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('Flow created:', result);
+
+        setFlowsData((prevData) => ({
+          ...prevData,
+          Active: [...prevData.Active, result],
+        }));
+      } catch (err) {
+        console.error('Failed to save flow:', err);
+      } finally {
+        setIsDrawerOpen(false);
+      }
+    },
+    [BaseUrl],
+  );
+
+  // Function to fetch flows data from the API
+  const fetchFlows = useCallback(async () => {
+    try {
+      const response = await fetch(`${BaseUrl}/flows`);
+      if (!response.ok) throw new Error('Failed to fetch flows');
+
+      const data = await response.json();
+
+      const activeFlows = data.filter(
+        (flow: any) => !flow.is_disabled && flow.priority >= 0,
+      );
+      const draftFlows = data.filter((flow: any) => flow.priority === 0);
+      const archivedFlows = data.filter(
+        (flow: any) => flow.is_disabled && flow.priority < 0,
+      );
+      const deletedFlows = data.filter(
+        (flow: any) => flow.is_disabled && flow.priority === -1,
+      );
+
+      setFlowsData({
+        Active: activeFlows,
+        Draft: draftFlows,
+        Archived: archivedFlows,
+        Deleted: deletedFlows,
+      });
+
+      console.log('Fetched Flows data:', data);
+    } catch (error) {
+      console.error('Failed to fetch flows:', error);
+    }
+  }, [BaseUrl]);
+
+  // Fetch flows data only once when the component mounts
+  useEffect(() => {
+    fetchFlows();
+  }, [fetchFlows]);
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-between sm:w-full md:flex-row">
@@ -167,7 +188,7 @@ export default function FlowsPage() {
           onClick={() => handleDrawerToggle('medium', 'right')}
           className="rounded-18 flex items-center gap-1 bg-black px-2 py-2 text-white hover:bg-white hover:text-black"
         >
-          <span> Create Flow </span>
+          <span>Create Flow</span>
         </Button>
       </div>
       <Drawer

@@ -62,14 +62,14 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
   const toggleDynamicField = (name: string, checked: boolean) => {
     const dynamicFieldMap: { [key: string]: FormsField } = {
       terminate: {
-        id: 'terminateUrl',
+        id: 'terminator',
         label: 'Terminate URL*',
         type: 'text',
         placeholder: 'Enter terminate URL',
         required: true,
       },
       validate: {
-        id: 'validateUrl',
+        id: 'validator',
         label: 'Validate URL*',
         type: 'text',
         placeholder: 'Enter validate URL',

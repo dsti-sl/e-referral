@@ -1,4 +1,5 @@
 'use client';
+import Swal from 'sweetalert2';
 import React, { useState, useEffect, useCallback } from 'react';
 import MenuCard from '@/components/MenuCard';
 import FlowsCard from '@/components/FlowsCard';
@@ -81,7 +82,6 @@ export default function FlowsPage() {
     },
   ];
 
-  // Function to toggle the drawer
   const handleDrawerToggle = useCallback(
     (
       size: 'small' | 'medium' | 'large',
@@ -93,12 +93,10 @@ export default function FlowsPage() {
     [],
   );
 
-  // Function to handle closing the drawer
   const handleDrawerClose = useCallback(() => {
     setIsDrawerOpen(false);
   }, []);
 
-  // Function to handle saving new flow
   const handleSave = useCallback(
     async (data: { [key: string]: any }) => {
       const newFlow = {
@@ -119,11 +117,25 @@ export default function FlowsPage() {
         });
 
         if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
+          const errorData = await response.json();
+          Swal.fire({
+            title: 'Error!',
+            text: errorData.detail || 'An unexpected error occurred.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+          return;
         }
 
         const result = await response.json();
-        console.log('Flow created:', result);
+
+        // Show success alert
+        Swal.fire({
+          title: 'Success!',
+          text: 'Flow created successfully.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        });
 
         setFlowsData((prevData) => ({
           ...prevData,
@@ -131,6 +143,14 @@ export default function FlowsPage() {
         }));
       } catch (err) {
         console.error('Failed to save flow:', err);
+
+        // Show error alert
+        Swal.fire({
+          title: 'Error!',
+          text: err.message || 'An unexpected error occurred.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
       } finally {
         setIsDrawerOpen(false);
       }
@@ -138,7 +158,6 @@ export default function FlowsPage() {
     [BaseUrl],
   );
 
-  // Function to fetch flows data from the API
   const fetchFlows = useCallback(async () => {
     try {
       const response = await fetch(`${BaseUrl}/flows`);
@@ -163,14 +182,9 @@ export default function FlowsPage() {
         Archived: archivedFlows,
         Deleted: deletedFlows,
       });
-
-      console.log('Fetched Flows data:', data);
-    } catch (error) {
-      console.error('Failed to fetch flows:', error);
-    }
+    } catch (error) {}
   }, [BaseUrl]);
 
-  // Fetch flows data only once when the component mounts
   useEffect(() => {
     fetchFlows();
   }, [fetchFlows]);

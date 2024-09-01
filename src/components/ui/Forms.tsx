@@ -1,10 +1,11 @@
 'use client';
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
+import { isValidUrl } from '@/utils/helpers';
 
 export interface FormsField {
   id: string;
   label: string;
-
   type:
     | 'text'
     | 'textarea'
@@ -29,57 +30,107 @@ interface FormsProps {
 const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
   const [formState, setFormState] = useState<{ [key: string]: any }>({});
   const [dynamicFields, setDynamicFields] = useState<FormsField[]>([]);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  // Handle form field changes
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
     const { name, value, type, checked }: any = e.target;
+
+    // Update form state
     setFormState((prevState) => ({
       ...prevState,
       [name]: type === 'checkbox' ? checked : value,
     }));
 
-    // Conditionally add fields based on checkbox selections
-    if (name === 'terminate' && checked) {
-      setDynamicFields((prevFields) => [
-        ...prevFields,
-        {
-          id: 'terminateUrl',
-          label: 'Terminate URL*',
-          type: 'text',
-          placeholder: 'Enter terminate URL',
-          required: true,
-        },
-      ]);
-    } else if (name === 'terminate' && !checked) {
-      setDynamicFields((prevFields) =>
-        prevFields.filter((field) => field.id !== 'terminateUrl'),
-      );
+    // Clear errors for the updated field
+    if (errors[name]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: '',
+      }));
     }
 
-    if (name === 'validate' && checked) {
-      setDynamicFields((prevFields) => [
-        ...prevFields,
-        {
-          id: 'validateUrl',
-          label: 'Validate URL*',
-          type: 'text',
-          placeholder: 'Enter validate URL',
-          required: true,
-        },
-      ]);
-    } else if (name === 'validate' && !checked) {
+    // Handle dynamic fields based on checkbox selections
+    toggleDynamicField(name, checked);
+  };
+
+  // Add or remove dynamic fields based on the checkbox state
+  const toggleDynamicField = (name: string, checked: boolean) => {
+    const dynamicFieldMap: { [key: string]: FormsField } = {
+      terminate: {
+        id: 'terminateUrl',
+        label: 'Terminate URL*',
+        type: 'text',
+        placeholder: 'Enter terminate URL',
+        required: true,
+      },
+      validate: {
+        id: 'validateUrl',
+        label: 'Validate URL*',
+        type: 'text',
+        placeholder: 'Enter validate URL',
+        required: true,
+      },
+    };
+
+    if (dynamicFieldMap[name]) {
       setDynamicFields((prevFields) =>
-        prevFields.filter((field) => field.id !== 'validateUrl'),
+        checked
+          ? [...prevFields, dynamicFieldMap[name]]
+          : prevFields.filter((field) => field.id !== `${name}Url`),
       );
     }
   };
 
+  // Validate the form fields
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formState.message) {
+      newErrors.message = 'Message cannot be empty';
+    }
+
+    if (!formState.name) {
+      newErrors.name = 'Name cannot be empty';
+    }
+
+    if (
+      formState.priority === undefined ||
+      !Number.isInteger(+formState.priority)
+    ) {
+      newErrors.priority = 'Priority must be a whole number';
+    }
+
+    return newErrors;
+  };
+
+  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('data =>', formState);
+
+    // Validate form fields
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    // Validate URLs if provided
+    if (formState.terminate && !isValidUrl(formState.terminateUrl)) {
+      Swal.fire('Invalid URL', 'Please enter a valid Terminate URL', 'error');
+      return;
+    }
+
+    if (formState.validate && !isValidUrl(formState.validateUrl)) {
+      Swal.fire('Invalid URL', 'Please enter a valid Validate URL', 'error');
+      return;
+    }
+
+    // Save the form data
     onSave(formState);
   };
 
@@ -92,65 +143,7 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
           <label htmlFor={field.id} className="text-gray-700">
             {field.label}
           </label>
-          {field.type === 'textarea' ? (
-            <textarea
-              id={field.id}
-              name={field.id}
-              placeholder={field.placeholder}
-              required={field.required}
-              onChange={handleChange}
-              className="min-h-[100px] w-full resize-none rounded-[7px] border border-gray-300 p-2 text-sm text-gray-700"
-            />
-          ) : field.type === 'checkbox' && field.options ? (
-            <div className="flex space-x-4">
-              {field.options.map((option) => (
-                <div key={option.value} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id={`${field.id}-${option.value}`}
-                    name={field.id}
-                    value={option.value}
-                    onChange={handleChange}
-                    className="form-checkbox"
-                  />
-                  <label
-                    htmlFor={`${field.id}-${option.value}`}
-                    className="text-gray-700"
-                  >
-                    {option.label}{' '}
-                    <span className="text-ellipsis text-xs">
-                      {option.labelDescription}
-                    </span>
-                  </label>
-                </div>
-              ))}
-            </div>
-          ) : field.type === 'select' && field.options ? (
-            <select
-              id={field.id}
-              name={field.id}
-              required={field.required}
-              onChange={handleChange}
-              className="rounded border border-gray-300 p-2 text-sm text-gray-700"
-            >
-              <option value="">Select {field.id}</option>
-              {field.options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              id={field.id}
-              name={field.id}
-              type={field.type}
-              placeholder={field.placeholder}
-              required={field.required}
-              onChange={handleChange}
-              className="rounded border border-gray-300 p-2 text-sm text-gray-700"
-            />
-          )}
+          {renderField(field)}
         </div>
       ))}
       <div className="flex justify-end space-x-4">
@@ -170,6 +163,78 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
       </div>
     </form>
   );
+
+  // Render form fields based on type
+  function renderField(field: FormsField) {
+    switch (field.type) {
+      case 'textarea':
+        return (
+          <textarea
+            id={field.id}
+            name={field.id}
+            placeholder={field.placeholder}
+            required={field.required}
+            onChange={handleChange}
+            className="min-h-[100px] w-full resize-none rounded-[7px] border border-gray-300 p-2 text-sm text-gray-700"
+          />
+        );
+      case 'checkbox':
+        return (
+          <div className="flex space-x-4">
+            {field.options?.map((option) => (
+              <div key={option.value} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id={`${field.id}-${option.value}`}
+                  name={field.id}
+                  value={option.value}
+                  onChange={handleChange}
+                  className="form-checkbox"
+                />
+                <label
+                  htmlFor={`${field.id}-${option.value}`}
+                  className="text-gray-700"
+                >
+                  {option.label}{' '}
+                  <span className="text-ellipsis text-xs">
+                    {option.labelDescription}
+                  </span>
+                </label>
+              </div>
+            ))}
+          </div>
+        );
+      case 'select':
+        return (
+          <select
+            id={field.id}
+            name={field.id}
+            required={field.required}
+            onChange={handleChange}
+            className="rounded border border-gray-300 p-2 text-sm text-gray-700"
+          >
+            <option value="">Select {field.id}</option>
+            {field.options?.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        );
+      default:
+        return (
+          <input
+            id={field.id}
+            name={field.id}
+            type={field.type}
+            placeholder={field.placeholder}
+            required={field.required}
+            onChange={handleChange}
+            className="rounded border border-gray-300 p-2 text-sm text-gray-700"
+          />
+        );
+    }
+  }
 };
 
 export default Forms;

@@ -84,7 +84,7 @@ export default function FlowsPage() {
     },
     {
       id: 'name',
-      label: 'Name/Title*',
+      label: 'Name*',
       type: 'text',
       placeholder: 'Enter flow name',
       required: true,

@@ -1,12 +1,27 @@
-// Example API route for fetching user data.
-import { NextResponse } from 'next/server';
+// utils/api.ts
+export async function get<T>(url: string, options?: RequestInit): Promise<T> {
+  const baseUrl = process.env.BASE_URL;
+  if (!baseUrl) {
+    throw new Error('BASE_URL is not defined');
+  }
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const username = url.searchParams.get('name');
+  try {
+    const response = await fetch(`${baseUrl}${url}`, {
+      method: 'GET',
+      ...options,
+    });
 
-  // Fetch user data (placeholder logic)
-  const message = { message: `Hello, ${username}!` };
+    console.log('baseUrl: ', response);
 
-  return NextResponse.json(message);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('Fetched data:', data);
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
 }

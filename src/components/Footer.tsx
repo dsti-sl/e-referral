@@ -2,20 +2,21 @@ import React from 'react';
 import { CopyrightIcon } from 'lucide-react';
 const Footer = () => {
   return (
-    <footer className="font-extralight text-gray-700">
-      <div className="px-4 sm:px-12 md:flex md:items-center md:justify-between">
-        <h1 className="md:mb:-0 px-5 py-2.5 lg:leading-normal">
-          <a
-            href="https://www.dsti.gov.sl/about-us/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Abous Us
-          </a>
-        </h1>
-        <CopyrightIcon className="-mr-72 size-4 px-0 font-thin text-gray-700" />
-        <span className="-ml-72 px-0">2024DSTI.All right reserve</span>
-        <h1 className="w-full px-5 py-2.5 md:w-auto">Privacy Policy</h1>
+    <footer className="flex items-center font-extralight text-gray-700">
+      <div className="m-auto flex px-96">
+        <CopyrightIcon className="size-4 pt-1" />
+        <h1 className="text-sm">2024DSTI.All right reserve</h1>
+      </div>
+
+      <div className="ml-auto flex px-2 text-sm">
+        <a
+          href="https://dsti.gov.sl/about-us"
+          target="_blank"
+          rel="noopener noreferrer cursor-pointer"
+        >
+          Abous Us
+        </a>
+        <h1 className="px-4 text-sm">Privacy Policy</h1>
       </div>
     </footer>
   );

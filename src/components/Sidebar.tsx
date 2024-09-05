@@ -7,7 +7,7 @@ export default function Sidebar() {
       <div className="mb-6">
         <nav className="space-7-4 flex flex-col py-16">
           <a
-            href="/dashboard"
+            href="/"
             className="item-centre m-auto flex flex-col object-cover px-2 py-4 text-white transition-transform duration-300 hover:scale-110 hover:bg-white hover:bg-opacity-20 hover:text-erefer-rose hover:shadow"
           >
             <Home className="m-auto mb-2 h-8 w-8 object-cover text-white transition-transform duration-300 hover:scale-110 hover:text-erefer-rose hover:shadow" />

@@ -6,6 +6,7 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       backgroundImage: {
@@ -15,6 +16,7 @@ const config: Config = {
       },
       colors: {
         'erefer-rose': '#A85766',
+        'erefer-light': '#bb7784',
       },
     },
   },

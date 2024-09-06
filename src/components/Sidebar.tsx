@@ -17,13 +17,13 @@ export default function Sidebar() {
             href="/flows"
             className="item-center m-auto flex flex-col object-cover px-2 py-4 text-white transition-transform duration-300 hover:scale-110 hover:bg-white hover:bg-opacity-20 hover:text-erefer-rose hover:shadow"
           >
-            <Workflow className="m-auto mb-2 h-8 w-8 object-cover text-white transition-transform duration-300 hover:scale-110 hover:text-erefer-rose hover:shadow" />
-            <span className="text-xs">Flows</span>
+            <Workflow className="m-auto mb-2 h-8 w-14 object-cover text-white transition-transform duration-300 hover:scale-110 hover:text-erefer-rose hover:shadow" />
+            <span className="px-2 text-xs">Flows</span>
           </a>
         </nav>
       </div>
       <button className="m-auto mb-2 mt-72 pt-72">
-        <LogOutIcon className="size-8 cursor-pointer object-cover transition-transform duration-300 hover:scale-110 hover:bg-white hover:bg-opacity-20 hover:text-erefer-rose hover:shadow" />
+        <LogOutIcon className="size-8 cursor-pointer object-cover transition-transform duration-300 hover:scale-110 hover:bg-opacity-20 hover:shadow" />
       </button>
       <div className="mt-30 pt-30 h-13 w-13 m-auto size-12 object-cover transition-transform duration-300 hover:scale-110 hover:shadow">
         <a

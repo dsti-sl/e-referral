@@ -167,7 +167,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
           <button
             onClick={handlePrevious}
             disabled={skip === 0}
-            className={`flex items-center space-x-2 rounded ${skip === 0 ? 'bg-gray-500' : 'bg-erefer-rose'} px-4 py-2 text-white`}
+            className={`flex items-center space-x-2 rounded px-4 py-4 ${skip === 0 ? 'bg-gray-500' : 'bg-erefer-rose'} px-4 py-2 text-white`}
           >
             <ArrowLeft className="h-5 w-5" />
             <span>Previous</span>
@@ -175,7 +175,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
           <button
             onClick={handleNext}
             disabled={flows.length < limit}
-            className={`flex items-center space-x-2 rounded ${flows.length < limit ? 'bg-gray-500' : 'bg-erefer-rose'} px-4 py-2 text-white`}
+            className={`flex items-center space-x-2 rounded px-4 py-4 ${flows.length < limit ? 'bg-gray-500' : 'bg-erefer-rose'} px-4 py-2 text-white`}
           >
             <ArrowRight className="h-5 w-5" />
             <span>Next</span>

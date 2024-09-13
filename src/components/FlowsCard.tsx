@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
 import { LoadingView } from '@/components/shared/LoadingView'; // Adjust the path as necessary
-import { ArrowLeft, ArrowRight, Search } from 'lucide-react'; // Import icons from lucide-react
+import { ArrowLeft, ArrowRight, Search, X } from 'lucide-react'; // Import icons from lucide-react
 
 interface Flow {
   id: number;
@@ -99,17 +99,32 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
     fetchFlows();
   };
 
+  const clearSearch = () => {
+    setSearchQuery('');
+    fetchFlows();
+  };
+
   return (
     <>
       <h2 className="mb-4 text-lg font-semibold text-black">{status} Flows</h2>
       <div className="mb-4 flex items-center space-x-2">
-        <input
-          type="text"
-          placeholder="Search by name"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded border p-4 text-gray-500"
-        />
+        <div className="relative w-full">
+          <input
+            type="text"
+            placeholder="Search by name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded border p-4 pr-10 text-gray-500"
+          />
+          {searchQuery && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-4 top-1/2 -translate-y-1/2 transform text-gray-500"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
+        </div>
         <button
           onClick={handleSearch}
           className="flex items-center rounded bg-erefer-rose p-4 px-4 py-4 text-white"
@@ -141,15 +156,22 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
                           {flow.description}
                         </p>
                         <label className="flex cursor-pointer items-center">
-                          <input
-                            type="checkbox"
-                            className="toggle-checkbox sr-only"
-                            checked={flow.is_disabled}
-                            onChange={() => handleToggle(flow.id)}
-                          />
-                          <span className="mr-6 text-sm text-gray-700">
+                          {/* Switch component */}
+                          <span className="mx-4 text-sm text-gray-700">
                             {flow.is_disabled ? 'Disabled' : 'Enabled'}
                           </span>
+                          <div
+                            className={`relative inline-block h-6 w-11 ${
+                              flow.is_disabled ? 'bg-gray-400' : 'bg-green-600'
+                            } rounded-full transition-colors duration-200`}
+                            onClick={() => handleToggle(flow.id)}
+                          >
+                            <span
+                              className={`absolute left-0.5 top-0.5 h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ${
+                                flow.is_disabled ? 'translate-x-5' : ''
+                              }`}
+                            />
+                          </div>
                         </label>
                       </div>
                     </li>
@@ -167,7 +189,9 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
           <button
             onClick={handlePrevious}
             disabled={skip === 0}
-            className={`flex items-center space-x-2 rounded px-4 py-4 ${skip === 0 ? 'bg-gray-500' : 'bg-erefer-rose'} px-4 py-2 text-white`}
+            className={`flex items-center space-x-2 rounded px-4 py-4 ${
+              skip === 0 ? 'bg-gray-500' : 'bg-erefer-rose'
+            } px-4 py-2 text-white`}
           >
             <ArrowLeft className="h-5 w-5" />
             <span>Previous</span>
@@ -175,7 +199,9 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
           <button
             onClick={handleNext}
             disabled={flows.length < limit}
-            className={`flex items-center space-x-2 rounded px-4 py-4 ${flows.length < limit ? 'bg-gray-500' : 'bg-erefer-rose'} px-4 py-2 text-white`}
+            className={`flex items-center space-x-2 rounded px-4 py-4 ${
+              flows.length < limit ? 'bg-gray-500' : 'bg-erefer-rose'
+            } px-4 py-2 text-white`}
           >
             <ArrowRight className="h-5 w-5" />
             <span>Next</span>

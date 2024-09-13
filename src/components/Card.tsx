@@ -21,7 +21,7 @@ const Card: React.FC<CardProps> = ({ title, pieData, data }) => {
       <div className="flex h-full w-full flex-col overflow-hidden rounded-lg bg-white p-4 shadow-lg">
         <div className="mb-4 text-center text-2xl font-bold">{title}</div>
         {pieData && (
-          <div className="mb-14 flex flex-grow items-center justify-center">
+          <div className="mb-16 flex flex-grow items-center justify-center">
             {' '}
             {/* Adjusted margin-bottom */}
             <div className="flex items-center justify-center">

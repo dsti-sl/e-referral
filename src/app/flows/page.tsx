@@ -6,7 +6,6 @@ import FlowsCard from '@/components/FlowsCard';
 import Button from '@/components/Button';
 import Drawer from '@/components/ui/Drawer';
 import Forms, { FormsField } from '@/components/ui/Forms';
-import { LoadingView } from '@/components/shared/LoadingView';
 
 export default function FlowsPage() {
   const [selectedStatus, setSelectedStatus] = useState<
@@ -19,7 +18,6 @@ export default function FlowsPage() {
     Deleted: [],
   });
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [drawerConfig, setDrawerConfig] = useState<{
     size: 'small' | 'medium' | 'large';
     position: 'left' | 'right' | 'top' | 'bottom';
@@ -110,7 +108,6 @@ export default function FlowsPage() {
         validator: data.validator || null,
         terminator: data.terminator || null,
       };
-      setIsLoading(true);
 
       try {
         const response = await fetch(`${BaseUrl}/flows`, {
@@ -127,12 +124,11 @@ export default function FlowsPage() {
             icon: 'error',
             confirmButtonText: 'OK',
           });
-          setIsLoading(false);
           return;
         }
 
         const result = await response.json();
-        setIsLoading(false);
+
         // Show success alert
         Swal.fire({
           title: 'Success!',
@@ -146,14 +142,15 @@ export default function FlowsPage() {
           Active: [...prevData.Active, result],
         }));
       } catch (err) {
+        console.error('Failed to save flow:', err);
+
         // Show error alert
         Swal.fire({
           title: 'Error!',
-          text: err?.message || 'An unexpected error occurred.',
+          text: err.message || 'An unexpected error occurred.',
           icon: 'error',
           confirmButtonText: 'OK',
         });
-        setIsLoading(false);
       } finally {
         setIsDrawerOpen(false);
       }
@@ -163,7 +160,6 @@ export default function FlowsPage() {
 
   const fetchFlows = useCallback(async () => {
     try {
-      setIsLoading(true);
       const response = await fetch(`${BaseUrl}/flows`);
       if (!response.ok) throw new Error('Failed to fetch flows');
 
@@ -186,10 +182,7 @@ export default function FlowsPage() {
         Archived: archivedFlows,
         Deleted: deletedFlows,
       });
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-    }
+    } catch (error) {}
   }, [BaseUrl]);
 
   useEffect(() => {
@@ -198,30 +191,18 @@ export default function FlowsPage() {
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-between sm:w-full md:flex-row">
-      <div className="flex w-full flex-wrap md:flex-nowrap">
-        <div className="ph-20 sm:w-full md:w-1/4 lg:w-1/4">
-          <MenuCard onSelect={setSelectedStatus} />
-        </div>
-        <LoadingView
-          isLoading={isLoading}
-          text="Please Wait..."
-          view={
-            <div className="sm:mt-4 sm:w-full md:w-3/4 lg:w-3/4">
-              <FlowsCard
-                status={selectedStatus}
-                flows={flowsData[selectedStatus]}
-              />
-            </div>
-          }
-        />
+      <div className="ph-20 sm:w-full md:w-1/4 lg:w-1/4">
+        <MenuCard onSelect={setSelectedStatus} />
       </div>
-
+      <div className="sm:mt-4 sm:w-full md:ml-2 md:w-3/4 lg:w-3/4">
+        <FlowsCard status={selectedStatus} flows={flowsData[selectedStatus]} />
+      </div>
       <div className="fixed right-24 top-24 py-4 pl-20">
         <Button
           onClick={() => handleDrawerToggle('medium', 'right')}
           className="rounded-18 flex items-center gap-1 bg-black px-2 py-2 text-white hover:bg-white hover:text-black"
         >
-          Create Flow
+          <span>Create Flow</span>
         </Button>
       </div>
       <Drawer

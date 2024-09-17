@@ -201,13 +201,13 @@ export default function Home() {
           </div>
 
           {/* Card for Daily Session */}
-          <div className="-mt-28 w-full pt-11 sm:w-1/2 lg:w-full">
+          <div className="-mt-24 w-full pt-11 sm:w-1/2 lg:w-full">
             <Card data={dailySessionData} />
           </div>
         </div>
 
         {/* Card for Pie Chart */}
-        <div className="mb-14 w-full sm:w-1/2 lg:w-8/12">
+        <div className="mb-10 w-full sm:w-1/2 lg:w-8/12">
           <Card title="Locations" pieData={pieData} />
         </div>
       </div>

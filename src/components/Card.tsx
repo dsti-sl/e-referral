@@ -21,7 +21,7 @@ const Card: React.FC<CardProps> = ({ title, pieData, data }) => {
       <div className="flex h-full w-full flex-col overflow-hidden rounded-lg bg-white p-4 shadow-lg">
         <div className="mb-4 text-center text-2xl font-bold">{title}</div>
         {pieData && (
-          <div className="mb-16 flex flex-grow items-center justify-center">
+          <div className="mb-16 flex h-full flex-grow items-center justify-center">
             {' '}
             {/* Adjusted margin-bottom */}
             <div className="flex items-center justify-center">
@@ -33,11 +33,11 @@ const Card: React.FC<CardProps> = ({ title, pieData, data }) => {
         {data && (
           <div className="h-60 flex-grow align-middle">
             {data.map((item, index) => (
-              <div key={index} className="mb-2">
-                <div className="mb-4 text-wrap text-center text-2xl font-bold">
+              <div key={index} className="my-4">
+                <div className="mb-3 text-wrap text-center text-2xl font-bold">
                   {item.name}
                 </div>
-                <div className="mt-8 py-10 text-center text-4xl font-bold text-blue-500">
+                <div className="mt-6 py-10 text-center text-4xl font-bold text-blue-500">
                   {item.average}
                 </div>
               </div>

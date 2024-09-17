@@ -29,7 +29,6 @@ interface FormsProps {
 
 const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
   const [formState, setFormState] = useState<{ [key: string]: any }>({});
-  const [dynamicFields, setDynamicFields] = useState<FormsField[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   // Handle form field changes
@@ -60,29 +59,12 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
 
   // Add or remove dynamic fields based on the checkbox state
   const toggleDynamicField = (name: string, checked: boolean) => {
-    const dynamicFieldMap: { [key: string]: FormsField } = {
-      terminate: {
-        id: 'terminator',
-        label: 'Terminate URL*',
-        type: 'text',
-        placeholder: 'Enter terminate URL',
-        required: true,
-      },
-      validate: {
-        id: 'validator',
-        label: 'Validate URL*',
-        type: 'text',
-        placeholder: 'Enter validate URL',
-        required: true,
-      },
-    };
-
-    if (dynamicFieldMap[name]) {
-      setDynamicFields((prevFields) =>
-        checked
-          ? [...prevFields, dynamicFieldMap[name]]
-          : prevFields.filter((field) => field.id !== `${name}Url`),
-      );
+    // Remove URL fields if checkbox is unchecked
+    if (!checked) {
+      setFormState((prevState) => ({
+        ...prevState,
+        [`${name}Url`]: undefined,
+      }));
     }
   };
 
@@ -119,13 +101,21 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
       return;
     }
 
-    // Validate URLs if provided
-    if (formState.terminate && !isValidUrl(formState.terminateUrl)) {
+    // Validate URLs if the respective checkbox is checked
+    if (
+      formState.terminate &&
+      formState.terminateUrl &&
+      !isValidUrl(formState.terminateUrl)
+    ) {
       Swal.fire('Invalid URL', 'Please enter a valid Terminate URL', 'error');
       return;
     }
 
-    if (formState.validate && !isValidUrl(formState.validateUrl)) {
+    if (
+      formState.validate &&
+      formState.validateUrl &&
+      !isValidUrl(formState.validateUrl)
+    ) {
       Swal.fire('Invalid URL', 'Please enter a valid Validate URL', 'error');
       return;
     }
@@ -134,11 +124,9 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
     onSave(formState);
   };
 
-  const allFields = [...fields, ...dynamicFields];
-
   return (
     <form onSubmit={handleSubmit} className="mt-8 flex flex-col space-y-4">
-      {allFields.map((field) => (
+      {fields.map((field) => (
         <div key={field.id} className="flex flex-col">
           <label htmlFor={field.id} className="text-gray-700">
             {field.label}
@@ -146,6 +134,40 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
           {renderField(field)}
         </div>
       ))}
+
+      {/* Display dynamic fields based on checkbox selection */}
+      {formState.terminate && (
+        <div className="flex flex-col">
+          <label htmlFor="terminateUrl" className="text-gray-700">
+            Terminate URL*
+          </label>
+          <input
+            id="terminateUrl"
+            name="terminateUrl"
+            type="text"
+            placeholder="Enter terminate URL"
+            onChange={handleChange}
+            className="rounded border border-gray-300 p-2 text-sm text-gray-700"
+          />
+        </div>
+      )}
+
+      {formState.validate && (
+        <div className="flex flex-col">
+          <label htmlFor="validateUrl" className="text-gray-700">
+            Validate URL*
+          </label>
+          <input
+            id="validateUrl"
+            name="validateUrl"
+            type="text"
+            placeholder="Enter validate URL"
+            onChange={handleChange}
+            className="rounded border border-gray-300 p-2 text-sm text-gray-700"
+          />
+        </div>
+      )}
+
       <div className="flex justify-end space-x-4">
         <button
           type="submit"
@@ -186,8 +208,7 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
                 <input
                   type="checkbox"
                   id={`${field.id}-${option.value}`}
-                  name={field.id}
-                  value={option.value}
+                  name={option.value}
                   onChange={handleChange}
                   className="form-checkbox"
                 />

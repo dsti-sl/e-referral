@@ -18,7 +18,7 @@ interface FlowsCardProps {
 const FlowsCard = ({ status }: FlowsCardProps) => {
   const [flows, setFlows] = useState<Flow[]>([]);
   const [skip, setSkip] = useState(0); // Pagination state
-  const [limit] = useState(5); // Number of records per page
+  const [limit] = useState(10); // Number of records per page
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const BaseUrl = process.env.BASE_URL;

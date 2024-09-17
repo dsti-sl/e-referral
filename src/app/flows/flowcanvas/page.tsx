@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Drawer from '@/components/ui/Drawer';
 import Button from '@/components/Button';
 import Forms, { FormsField } from '@/components/ui/Forms';
+import { Trash2Icon, ArrowLeft } from 'lucide-react';
 
 interface NodeData {
   id: string;
@@ -58,6 +59,61 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
     },
   ];
 
+  const handleAddNodeToInitializeFlow = () => {
+    setNodeToEdit(null);
+    setIsDrawerOpen(true);
+    setSelectedNodeId(null); // Reset any active node on the column to add a new node
+    setCurrentColumnId('col-1'); // This ensures that the current column ID is set to 'col-1'
+  };
+
+  const handleAddOrEditNode = (data: { title: string; priority: string }) => {
+    if (!currentColumnId) return;
+
+    if (nodeToEdit) {
+      setColumns((prevColumns) =>
+        prevColumns.map((column) =>
+          column.id === currentColumnId
+            ? {
+                ...column,
+                nodes: column.nodes.map((node) =>
+                  node.id === nodeToEdit.id
+                    ? { ...node, label: data.title, priority: data.priority }
+                    : node,
+                ),
+              }
+            : column,
+        ),
+      );
+    } else {
+      const newNode: NodeData = {
+        id: `${Date.now()}`,
+        label: data.title,
+        parentId: currentColumnId !== 'col-1' ? selectedNodeId : undefined,
+        priority: data.priority,
+      };
+
+      setColumns((prevColumns) =>
+        prevColumns.map((column) =>
+          column.id === currentColumnId
+            ? { ...column, nodes: [...column.nodes, newNode] }
+            : column,
+        ),
+      );
+
+      // After adding a node to 'Initialize Flow', keep the column open for adding more nodes
+      if (currentColumnId === 'col-1') {
+        setCurrentColumnId('col-1');
+        setSelectedNodeId(null);
+      } else {
+        // Reset the state for subsequent columns.
+        setCurrentColumnId(null);
+      }
+    }
+
+    setIsDrawerOpen(false);
+    setNodeToEdit(null);
+  };
+
   const handleNodeClick = (columnId: string, nodeId: string) => {
     setSelectedNodeId(nodeId);
 
@@ -96,50 +152,6 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
   const handleNodeDoubleClick = (node: NodeData) => {
     setNodeToEdit(node);
     setIsDrawerOpen(true);
-  };
-
-  const handleAddOrEditNode = (data: { title: string; priority: string }) => {
-    if (!currentColumnId) return;
-
-    // Reset the active node when adding a new node in "Initialize Flow"
-    if (currentColumnId === 'col-1') {
-      setSelectedNodeId(null);
-    }
-
-    if (nodeToEdit) {
-      setColumns((prevColumns) =>
-        prevColumns.map((column) =>
-          column.id === currentColumnId
-            ? {
-                ...column,
-                nodes: column.nodes.map((node) =>
-                  node.id === nodeToEdit.id
-                    ? { ...node, label: data.title, priority: data.priority }
-                    : node,
-                ),
-              }
-            : column,
-        ),
-      );
-    } else {
-      const newNode: NodeData = {
-        id: `${Date.now()}`,
-        label: data.title,
-        parentId: currentColumnId !== 'col-1' ? selectedNodeId : undefined,
-        priority: data.priority,
-      };
-
-      setColumns((prevColumns) =>
-        prevColumns.map((column) =>
-          column.id === currentColumnId
-            ? { ...column, nodes: [...column.nodes, newNode] }
-            : column,
-        ),
-      );
-    }
-
-    setIsDrawerOpen(false);
-    setNodeToEdit(null);
   };
 
   const getFlowPathNodes = (): string[] => {
@@ -183,18 +195,32 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
     );
   };
 
-  const handleNodeDelete = (columnId: string, nodeId: string) => {
+  const deleteNodeAndChildren = (columnId: string, nodeId: string) => {
+    // This ensure that all node IDs are collected before deleting
+    const nodesToDelete = new Set<string>();
+    const collectNodesToDelete = (currentNodeId: string) => {
+      nodesToDelete.add(currentNodeId);
+      columns.forEach((column) => {
+        column.nodes.forEach((node) => {
+          if (node.parentId === currentNodeId) {
+            collectNodesToDelete(node.id);
+          }
+        });
+      });
+    };
+
+    // Start collecting nodes from the target nodeId
+    collectNodesToDelete(nodeId);
+
+    // Update columns and remove nodes
     setColumns((prevColumns) =>
-      prevColumns.map((column) =>
-        column.id === columnId
-          ? {
-              ...column,
-              nodes: column.nodes.filter((node) => node.id !== nodeId),
-            }
-          : column,
-      ),
+      prevColumns.map((column) => ({
+        ...column,
+        nodes: column.nodes.filter((node) => !nodesToDelete.has(node.id)),
+      })),
     );
 
+    // Hide columns that are now empty
     setColumns((prevColumns) =>
       prevColumns.map((column, index) =>
         column.nodes.length === 0 && index > 0
@@ -202,38 +228,56 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
           : column,
       ),
     );
+
+    // Keep the state of parent nodes persisted
+    const deletedNode = columns
+      .flatMap((col) => col.nodes)
+      .find((node) => node.id === nodeId);
+    if (deletedNode && deletedNode.parentId) {
+      setSelectedNodeId(deletedNode.parentId);
+    }
+
+    console.log('Deleted nodes:', Array.from(nodesToDelete));
+    console.log('Node ID:', nodeId);
   };
 
   return (
-    <div className="h-screen w-full p-8">
-      <Link href="/flows" className="text-sm text-gray-900 hover:text-black">
-        Back to Flows
-      </Link>
-      <h1 className="mb-6 text-2xl font-bold text-black">
-        Flow Artboard for Flow {flowId}
-      </h1>
+    <div className="">
+      <div className="flex items-center">
+        <Link
+          href="/flows"
+          className="mr-2 text-sm text-gray-900 hover:text-black"
+        >
+          <ArrowLeft />
+        </Link>
+        <h1 className="text-lg text-gray-800">
+          Flows Management System {flowId}
+        </h1>
+      </div>
 
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-5 gap-4 p-10">
         {columns.map((column) =>
           column.isActive ? (
             <div
               key={column.id}
-              className={`rounded-lg border p-4 shadow ${
-                column.isActive ? 'bg-blue-800' : 'bg-gray-300'
+              className={`rounded-lg border p-4 ${
+                column.isActive
+                  ? 'rounded-[10px] bg-[rgba(_20,_13,_13,_0.81)] backdrop-blur-[4.5px] backdrop-filter [box-shadow:0_2px_22px_0_rgba(_31,_38,_135,_0.37_)]'
+                  : 'rounded-[10px] bg-[rgba(_0,_0,_0,_0.15_)] backdrop-blur-[5px] backdrop-filter [box-shadow:0_8px_32px_0_rgba(_31,_38,_135,_0.37_)]'
               }`}
             >
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-center text-lg font-semibold text-white">
                 {column.title}
               </h2>
               <ul className="mt-4 space-y-2">
                 {getFilteredNodes(column.id).map((node) => (
                   <li
                     key={node.id}
-                    className={`relative cursor-pointer rounded border p-2 shadow ${
+                    className={`relative cursor-pointer rounded p-1 ${
                       selectedNodeId === node.id ||
                       getFlowPathNodes().includes(node.id)
-                        ? 'bg-green-500'
-                        : 'bg-black hover:bg-gray-100'
+                        ? 'bg-erefer-light hover:bg-erefer-rose'
+                        : 'hover:bg-erefer-rose'
                     }`}
                     onClick={() => handleNodeClick(column.id, node.id)}
                     onDoubleClick={() => handleNodeDoubleClick(node)}
@@ -241,25 +285,21 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
                     {node.priority && <span>{node.priority}: </span>}
                     {node.label}
                     <span
-                      className="absolute right-2 top-2 cursor-pointer text-red-500"
+                      className="absolute right-2 top-2 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleNodeDelete(column.id, node.id);
+                        deleteNodeAndChildren(column.id, node.id);
                       }}
                     >
-                      🗑️
+                      <Trash2Icon className="h-5 w-5" />
                     </span>
                   </li>
                 ))}
               </ul>
               {column.id === 'col-1' && (
                 <Button
-                  onClick={() => {
-                    setNodeToEdit(null);
-                    setIsDrawerOpen(true);
-                    setSelectedNodeId(null); // Reset the active node on add
-                  }}
-                  className="mt-2 w-full"
+                  onClick={handleAddNodeToInitializeFlow}
+                  className="text-black-500 mt-2 w-full bg-white hover:bg-erefer-light hover:text-erefer-rose"
                 >
                   Add Node to {column.title}
                 </Button>
@@ -272,7 +312,7 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
                       setNodeToEdit(null);
                       setIsDrawerOpen(true);
                     }}
-                    className="mt-2 w-full"
+                    className="text-black-500 mt-2 w-full bg-white hover:bg-erefer-light hover:text-white"
                   >
                     Add Node to {column.title}
                   </Button>
@@ -294,6 +334,7 @@ const FlowCanvas: React.FC<{ flowId: string }> = ({ flowId }) => {
         <Forms
           fields={formFields}
           onSave={handleAddOrEditNode}
+          onClose={() => setIsDrawerOpen(false)}
           initialData={
             nodeToEdit
               ? { title: nodeToEdit.label, priority: nodeToEdit.priority }

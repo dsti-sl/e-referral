@@ -1,10 +1,9 @@
 'use client';
-
-import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+import React, { useState, useEffect, useCallback } from 'react';
 import MenuCard from '@/components/MenuCard';
 import FlowsCard from '@/components/FlowsCard';
 import Button from '@/components/Button';
-import { Plus } from 'lucide-react';
 import Drawer from '@/components/ui/Drawer';
 import Forms, { FormsField } from '@/components/ui/Forms';
 
@@ -12,49 +11,12 @@ export default function FlowsPage() {
   const [selectedStatus, setSelectedStatus] = useState<
     'Active' | 'Draft' | 'Archived' | 'Deleted'
   >('Active');
-
-  const [flowsData, setFlowsData] = useState({
-    Active: [
-      {
-        id: 1,
-        name: 'Flow 1',
-        description: 'Description 1',
-        startDate: '2024-01-01',
-      },
-      {
-        id: 2,
-        name: 'Flow 2',
-        description: 'Description 2',
-        startDate: '2024-01-02',
-      },
-    ],
-    Draft: [
-      {
-        id: 3,
-        name: 'Flow 3',
-        description: 'Description 3',
-        startDate: '2024-02-01',
-      },
-    ],
-    Archived: [
-      {
-        id: 4,
-        name: 'Flow 4',
-        description: 'Description 4',
-        startDate: '2024-03-01',
-      },
-    ],
-    Deleted: [
-      {
-        id: 5,
-        name: 'Flow 5',
-        description: 'Description 5',
-        startDate: '2024-04-01',
-      },
-    ],
+  const [flowsData, setFlowsData] = useState<{ [key: string]: any[] }>({
+    Active: [],
+    Draft: [],
+    Archived: [],
+    Deleted: [],
   });
-
-  // Drawer configuration
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [drawerConfig, setDrawerConfig] = useState<{
     size: 'small' | 'medium' | 'large';
@@ -64,96 +26,197 @@ export default function FlowsPage() {
     position: 'right',
   });
 
-  // Dynamic form configuration using the custom Forms component
+  const BaseUrl = process.env.BASE_URL;
+
   const formFields: FormsField[] = [
     {
+      id: 'message',
+      label: 'Message*',
+      type: 'text',
+      placeholder: 'Enter flow message',
+      required: true,
+    },
+    {
+      id: 'allow_custom_feedback',
+      label: '',
+      type: 'checkbox',
+      options: [
+        {
+          label: 'Allow Custom Input ',
+          labelDescription: '(Allowing users to enter custom input)',
+          value: 'allow_custom_feedback',
+        },
+      ],
+    },
+    {
       id: 'name',
-      label: 'Name/Title',
+      label: 'Name*',
       type: 'text',
       placeholder: 'Enter flow name',
       required: true,
     },
     {
-      id: 'description',
-      label: 'Description',
-      type: 'textarea',
-      placeholder: 'Enter flow description',
+      id: 'priority',
+      label: 'Priority*',
+      type: 'number',
       required: true,
     },
     {
-      id: 'startDate',
-      label: 'Start Date',
-      type: 'date',
-      placeholder: '',
+      id: 'description',
+      label: 'Description*',
+      type: 'textarea',
+      placeholder: 'Enter detailed description about the flow',
       required: true,
+    },
+    {
+      id: 'terminate',
+      label: '',
+      type: 'checkbox',
+      options: [{ label: 'Terminate', value: 'terminate' }],
+    },
+    {
+      id: 'validate',
+      label: '',
+      type: 'checkbox',
+      options: [{ label: 'Validate', value: 'validate' }],
     },
   ];
 
-  // Handling drawer toggle when the "Create Flow" button is clicked.
-  const handleDrawerToggle = (
-    size: 'small' | 'medium' | 'large',
-    position: 'left' | 'right' | 'top' | 'bottom',
-  ) => {
-    setDrawerConfig({ size, position });
-    setIsDrawerOpen(true);
-  };
+  const handleDrawerToggle = useCallback(
+    (
+      size: 'small' | 'medium' | 'large',
+      position: 'left' | 'right' | 'top' | 'bottom',
+    ) => {
+      setDrawerConfig({ size, position });
+      setIsDrawerOpen(true);
+    },
+    [],
+  );
 
-  const handleSave = (data: { [key: string]: any }) => {
-    const newFlowId = Date.now();
-    const newFlow = {
-      id: newFlowId,
-      name: data.name,
-      description: data.description,
-      startDate: data.startDate,
-    };
-
-    setFlowsData((prevData) => ({
-      ...prevData,
-      Active: [...prevData.Active, newFlow],
-    }));
-
+  const handleDrawerClose = useCallback(() => {
     setIsDrawerOpen(false);
-  };
-
-  // Fetching saved flows data from local storage on page load.
-  useEffect(() => {
-    const savedFlowsData = localStorage.getItem('flowsData');
-    if (savedFlowsData) {
-      setFlowsData(JSON.parse(savedFlowsData));
-    }
   }, []);
 
+  const handleSave = useCallback(
+    async (data: { [key: string]: any }) => {
+      const newFlow = {
+        name: data.name,
+        message: data.message,
+        description: data.description,
+        priority: data.priority,
+        allow_custom_feedback: data.allow_custom_feedback || false,
+        validator: data.validator || null,
+        terminator: data.terminator || null,
+      };
+
+      try {
+        const response = await fetch(`${BaseUrl}/flows`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newFlow),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          Swal.fire({
+            title: 'Error!',
+            text: errorData.detail || 'An unexpected error occurred.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+          return;
+        }
+
+        const result = await response.json();
+
+        // Show success alert
+        Swal.fire({
+          title: 'Success!',
+          text: 'Flow created successfully.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        });
+
+        setFlowsData((prevData) => ({
+          ...prevData,
+          Active: [...prevData.Active, result],
+        }));
+      } catch (err) {
+        console.error('Failed to save flow:', err);
+
+        // Show error alert
+        Swal.fire({
+          title: 'Error!',
+          text: err.message || 'An unexpected error occurred.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      } finally {
+        setIsDrawerOpen(false);
+      }
+    },
+    [BaseUrl],
+  );
+
+  const fetchFlows = useCallback(async () => {
+    try {
+      const response = await fetch(`${BaseUrl}/flows`);
+      if (!response.ok) throw new Error('Failed to fetch flows');
+
+      const data = await response.json();
+
+      const activeFlows = data.filter(
+        (flow: any) => !flow.is_disabled && flow.priority >= 0,
+      );
+      const draftFlows = data.filter((flow: any) => flow.priority === 0);
+      const archivedFlows = data.filter(
+        (flow: any) => flow.is_disabled && flow.priority < 0,
+      );
+      const deletedFlows = data.filter(
+        (flow: any) => flow.is_disabled && flow.priority === -1,
+      );
+
+      setFlowsData({
+        Active: activeFlows,
+        Draft: draftFlows,
+        Archived: archivedFlows,
+        Deleted: deletedFlows,
+      });
+    } catch (error) {}
+  }, [BaseUrl]);
+
   useEffect(() => {
-    localStorage.setItem('flowsData', JSON.stringify(flowsData));
-  }, [flowsData]);
+    fetchFlows();
+  }, [fetchFlows]);
 
   return (
-    <div className="container mx-auto flex items-center justify-between">
-      <div className="ph-20 w-1/4">
+    <div className="container mx-auto flex flex-col items-center justify-between sm:w-full md:flex-row">
+      <div className="ph-20 sm:w-full md:w-1/4 lg:w-1/4">
         <MenuCard onSelect={setSelectedStatus} />
       </div>
-      <div className="w-3/4">
+      <div className="sm:mt-4 sm:w-full md:ml-2 md:w-3/4 lg:w-3/4">
         <FlowsCard status={selectedStatus} flows={flowsData[selectedStatus]} />
       </div>
       <div className="fixed right-24 top-24 py-4 pl-20">
         <Button
-          onClick={() => {
-            handleDrawerToggle('medium', 'right');
-          }}
+          onClick={() => handleDrawerToggle('medium', 'right')}
           className="rounded-18 flex items-center gap-1 bg-black px-2 py-2 text-white hover:bg-white hover:text-black"
         >
-          <Plus className="h-5 w-5" />
-          <span> Create Flow </span>
+          <span>Create Flow</span>
         </Button>
       </div>
       <Drawer
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
+        onClose={handleDrawerClose}
         size={drawerConfig.size}
         position={drawerConfig.position}
       >
         <h2 className="mb-4 text-lg font-semibold">Create New Flow</h2>
-        <Forms fields={formFields} onSave={handleSave} />
+        <Forms
+          onClose={handleDrawerClose}
+          fields={formFields}
+          onSave={handleSave}
+        />
       </Drawer>
     </div>
   );

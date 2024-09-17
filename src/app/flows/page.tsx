@@ -111,7 +111,7 @@ export default function FlowsPage() {
         terminator: data.terminator || null,
       };
       setIsLoading(true);
-
+      setIsDrawerOpen(false);
       try {
         const response = await fetch(`${BaseUrl}/flows`, {
           method: 'POST',
@@ -133,6 +133,7 @@ export default function FlowsPage() {
 
         const result = await response.json();
         setIsLoading(false);
+
         // Show success alert
         Swal.fire({
           title: 'Success!',
@@ -216,7 +217,7 @@ export default function FlowsPage() {
         />
       </div>
 
-      <div className="fixed right-24 top-24 py-4 pl-20">
+      <div className="fixed right-24 top-24 py-4 pl-10">
         <Button
           onClick={() => handleDrawerToggle('medium', 'right')}
           className="rounded-18 flex items-center gap-1 bg-black px-2 py-2 text-white hover:bg-white hover:text-black"

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Drawer from '@/components/ui/Drawer';
 import Button from '@/components/Button';
 import Forms from '@/components/ui/Forms';
-import { Trash2Icon, ArrowLeft, EditIcon } from 'lucide-react'; // Add Edit icon
+import { Trash2Icon, ArrowLeft, EditIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { formFields } from '@/utils/helpers';
@@ -17,6 +17,7 @@ interface NodeData {
   description?: string;
   priority?: string;
   terminator?: boolean;
+  allow_custom_feedback?: boolean;
   validator?: boolean;
   is_disabled?: boolean;
   descendants?: Array<object>;
@@ -45,27 +46,39 @@ const FlowCanvas: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [clickedNodes, setClickedNodes] = useState<string[]>([]); // Track clicked nodes
+  const [clickedNodes, setClickedNodes] = useState<string[]>([]);
   const [nodeToEdit, setNodeToEdit] = useState<NodeData | null>(null);
-  const [currentColumnId, setCurrentColumnId] = useState<string>('col-1');
+  const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
 
   // Fetch descendants on page load for the initial flowId
   useEffect(() => {
     if (flowId) {
-      fetchFlowDescendants(flowId, 'col-1');
+      fetchFlowDescendants(flowId, 'col-1', null);
     }
   }, [flowId]);
 
-  const fetchFlowDescendants = async (parentId: string, columnId: string) => {
+  const fetchFlowDescendants = async (
+    parentId: string,
+    columnId: string,
+    selectedNodeId: string | null,
+  ) => {
     try {
       const response = await fetch(`${BaseUrl}/flows/${parentId}`);
       if (!response.ok) throw new Error('Failed to fetch descendants');
       const result = await response.json();
 
+      const filteredDescendants = selectedNodeId
+        ? result.descendants.filter(
+            (descendant: NodeData) => descendant.parent_id === selectedNodeId,
+          )
+        : result.descendants.filter(
+            (descendant: NodeData) => descendant.parent_id == flowId,
+          );
+
       setColumns((prevColumns) =>
         prevColumns.map((col) =>
           col.id === columnId
-            ? { ...col, nodes: result.descendants || [], name: result.name }
+            ? { ...col, nodes: filteredDescendants || [], name: result.name }
             : col,
         ),
       );
@@ -75,27 +88,25 @@ const FlowCanvas: React.FC = () => {
   };
 
   const handleNodeClick = async (columnId: string, nodeId: string) => {
-    setSelectedNodeId(nodeId);
+    const currentIndex = columns.findIndex((col) => col.id === columnId);
 
-    // Track clicked nodes for highlighting
-    setClickedNodes((prevClickedNodes) =>
-      prevClickedNodes.includes(nodeId)
-        ? prevClickedNodes
-        : [...prevClickedNodes, nodeId],
+    // Show only the next column
+    setColumns((prevColumns) =>
+      prevColumns.map((col, index) => ({
+        ...col,
+        isActive: index <= currentIndex + 1,
+      })),
     );
 
-    // Determine the next column and load its nodes
-    const nextColumnIndex = columns.findIndex((col) => col.id === columnId) + 1;
+    setSelectedNodeId(nodeId);
+    setClickedNodes([nodeId]);
+
+    const nextColumnIndex = currentIndex + 1;
     if (nextColumnIndex < columns.length) {
       const nextColumnId = columns[nextColumnIndex].id;
-      await fetchFlowDescendants(nodeId, nextColumnId);
-      setColumns((prevColumns) =>
-        prevColumns.map((col, index) =>
-          index === nextColumnIndex ? { ...col, isActive: true } : col,
-        ),
-      );
+      await fetchFlowDescendants(nodeId, nextColumnId, nodeId);
+      setCurrentColumnIndex(nextColumnIndex);
     }
-    setCurrentColumnId(columns[nextColumnIndex]?.id || 'col-1');
   };
 
   const handleAddOrEditNode = async (data: NodeData) => {
@@ -103,6 +114,7 @@ const FlowCanvas: React.FC = () => {
     const newNode = {
       ...data,
       parent_id: parentId,
+      allow_custom_feedback: data.allow_custom_feedback,
     };
 
     try {
@@ -111,12 +123,25 @@ const FlowCanvas: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newNode),
       });
-      if (!response.ok) throw new Error('Failed to add node');
+      if (!response.ok) {
+        const errorData = await response.json();
+        Swal.fire({
+          title: 'Error!',
+          text: errorData.detail || 'An unexpected error occurred.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      }
       const result = await response.json();
-
+      Swal.fire({
+        title: 'Success!',
+        text: 'Flow created successfully.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
       setColumns((prevColumns) =>
-        prevColumns.map((col) =>
-          col.id === currentColumnId
+        prevColumns.map((col, index) =>
+          index === currentColumnIndex
             ? { ...col, nodes: [...col.nodes, result] }
             : col,
         ),
@@ -125,6 +150,7 @@ const FlowCanvas: React.FC = () => {
       console.error('Error adding node:', error);
     } finally {
       setIsDrawerOpen(false);
+      setNodeToEdit(null); // Clear the nodeToEdit state after saving
     }
   };
 
@@ -148,6 +174,12 @@ const FlowCanvas: React.FC = () => {
         nodes: column.nodes.filter((node) => !nodesToDelete.has(node.id)),
       })),
     );
+  };
+
+  const handleEdit = (node: NodeData) => {
+    setNodeToEdit(node);
+    setIsDrawerOpen(true);
+    console.log('node =>', node);
   };
 
   return (
@@ -175,26 +207,18 @@ const FlowCanvas: React.FC = () => {
                 {column.name}
               </h2>
               <ul className="mt-4 space-y-2">
-                {column.nodes.map((node) => (
+                {column.nodes.map((node: any) => (
                   <li
                     key={node.id}
-                    className={`relative cursor-pointer rounded p-1 hover:bg-erefer-rose ${
-                      clickedNodes.includes(node.id)
-                        ? 'bg-erefer-rose text-white'
-                        : ''
-                    }`}
+                    className="group relative cursor-pointer rounded p-1 hover:bg-erefer-rose"
                     onClick={() => handleNodeClick(column.id, node.id)}
                   >
-                    {node.priority && <span>{node.priority}: </span>}{' '}
+                    {node.priority && <span>{node.priority}. </span>}
                     {node.name}
                     <div className="absolute right-2 top-2 hidden space-x-2 group-hover:flex">
                       <EditIcon
                         className="h-5 w-5 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setNodeToEdit(node);
-                          setIsDrawerOpen(true);
-                        }}
+                        onClick={() => handleEdit(node)}
                       />
                       <Trash2Icon
                         className="h-5 w-5 cursor-pointer"
@@ -204,13 +228,18 @@ const FlowCanvas: React.FC = () => {
                         }}
                       />
                     </div>
+                    <div>
+                      {node.allow_custom_feedback && (
+                        <>This flow has custom feedback</>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
               {column.isActive && (
                 <Button
                   onClick={() => {
-                    setNodeToEdit(null);
+                    setNodeToEdit(null); // Clear nodeToEdit for adding a new node
                     setIsDrawerOpen(true);
                   }}
                   className="text-black-500 mt-2 w-full bg-white hover:bg-erefer-light hover:text-white"
@@ -235,6 +264,7 @@ const FlowCanvas: React.FC = () => {
         <Forms
           fields={formFields}
           onSave={handleAddOrEditNode}
+          initialData={nodeToEdit}
           onClose={() => setIsDrawerOpen(false)}
         />
       </Drawer>

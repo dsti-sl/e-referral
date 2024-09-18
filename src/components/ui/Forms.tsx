@@ -5,15 +5,17 @@ import Swal from 'sweetalert2';
 
 interface FormsProps {
   fields: FormsField[];
+  data?: any;
   onSave: (data: { [key: string]: any }) => void;
   onClose: () => void;
 }
 
-const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
+const Forms: React.FC<FormsProps> = ({ fields, data, onSave, onClose }) => {
   const [formState, setFormState] = useState<{ [key: string]: any }>({});
   const [dynamicFields, setDynamicFields] = useState<FormsField[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  console.log('data  here', data);
   const toggleDynamicField = (name: string, checked: boolean) => {
     // Remove URL fields if checkbox is unchecked
     if (!checked) {

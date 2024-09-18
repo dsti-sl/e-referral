@@ -1,24 +1,28 @@
-import React from 'react';
 import { CopyrightIcon } from 'lucide-react';
-const Footer = () => {
+
+export default function Foote() {
   return (
-    <footer className="font-extralight text-gray-700">
-      <div className="px-4 sm:px-12 md:flex md:items-center md:justify-between">
-        <h1 className="md:mb:-0 px-5 py-2.5 lg:leading-normal">
-          <a
-            href="https://www.dsti.gov.sl/about-us/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Abous Us
-          </a>
-        </h1>
-        <CopyrightIcon className="-mr-72 size-4 px-0 font-thin text-gray-700" />
-        <span className="-ml-72 px-0">2024DSTI.All right reserve</span>
-        <h1 className="w-full px-5 py-2.5 md:w-auto">Privacy Policy</h1>
+    <footer className="w-full bg-white">
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="flex items-center">
+          <img src="UNICEF_Logo.png" alt="UNICEF Logo" className="h-6 w-auto" />
+        </div>
+        <div className="flex items-center">
+          <span className="text-gray-700">© 2024 All rights reserved.</span>
+        </div>
+        <div className="flex items-center">
+          <h1 className="px-5 py-2.5 md:mb-0 lg:leading-normal">
+            <a
+              href="https://www.dsti.gov.sl/about-us/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              About Us
+            </a>
+          </h1>
+          ;k
+        </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

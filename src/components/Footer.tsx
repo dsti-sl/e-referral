@@ -1,5 +1,3 @@
-import { CopyrightIcon } from 'lucide-react';
-
 export default function Foote() {
   return (
     <footer className="w-full bg-white">

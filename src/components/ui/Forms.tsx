@@ -1,25 +1,7 @@
 'use client';
+import { FormsField, isValidUrl } from '@/utils/helpers';
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
-import { isValidUrl } from '@/utils/helpers';
-
-export interface FormsField {
-  id: string;
-  label: string;
-  type:
-    | 'text'
-    | 'textarea'
-    | 'number'
-    | 'email'
-    | 'password'
-    | 'date'
-    | 'checkbox'
-    | 'radio'
-    | 'select';
-  placeholder?: string;
-  required?: boolean;
-  options?: { label: string; value: string; labelDescription?: string }[];
-}
 
 interface FormsProps {
   fields: FormsField[];
@@ -29,9 +11,40 @@ interface FormsProps {
 
 const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
   const [formState, setFormState] = useState<{ [key: string]: any }>({});
+  const [dynamicFields, setDynamicFields] = useState<FormsField[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  // Handle form field changes
+  const toggleDynamicField = (name: string, checked: boolean) => {
+    // Remove URL fields if checkbox is unchecked
+    if (!checked) {
+      setFormState((prevState) => ({
+        ...prevState,
+        [`${name}Url`]: undefined,
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formState.message) {
+      newErrors.message = 'Message cannot be empty';
+    }
+
+    if (!formState.name) {
+      newErrors.name = 'Name cannot be empty';
+    }
+
+    if (
+      formState.priority === undefined ||
+      !Number.isInteger(+formState.priority)
+    ) {
+      newErrors.priority = 'Priority must be a whole number';
+    }
+
+    return newErrors;
+  };
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -57,40 +70,6 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
     toggleDynamicField(name, checked);
   };
 
-  // Add or remove dynamic fields based on the checkbox state
-  const toggleDynamicField = (name: string, checked: boolean) => {
-    // Remove URL fields if checkbox is unchecked
-    if (!checked) {
-      setFormState((prevState) => ({
-        ...prevState,
-        [`${name}Url`]: undefined,
-      }));
-    }
-  };
-
-  // Validate the form fields
-  const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-
-    if (!formState.message) {
-      newErrors.message = 'Message cannot be empty';
-    }
-
-    if (!formState.name) {
-      newErrors.name = 'Name cannot be empty';
-    }
-
-    if (
-      formState.priority === undefined ||
-      !Number.isInteger(+formState.priority)
-    ) {
-      newErrors.priority = 'Priority must be a whole number';
-    }
-
-    return newErrors;
-  };
-
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -98,6 +77,7 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      Swal.fire('Input error', validationErrors.message, 'error');
       return;
     }
 
@@ -119,8 +99,7 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
       Swal.fire('Invalid URL', 'Please enter a valid Validate URL', 'error');
       return;
     }
-
-    // Save the form data
+    console.log('data =>', formState);
     onSave(formState);
   };
 
@@ -186,7 +165,7 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
     </form>
   );
 
-  // Render form fields based on type
+  //Render form fields based on type
   function renderField(field: FormsField) {
     switch (field.type) {
       case 'textarea':

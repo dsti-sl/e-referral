@@ -46,3 +46,64 @@ export const isValidUrl = (url: string) => {
   );
   return !!urlPattern.test(url);
 };
+
+export interface FormsField {
+  id: string;
+  label: string;
+  type:
+    | 'text'
+    | 'textarea'
+    | 'number'
+    | 'email'
+    | 'password'
+    | 'date'
+    | 'checkbox'
+    | 'radio'
+    | 'select';
+  placeholder?: string;
+  required?: boolean;
+  options?: { label: string; value: string; labelDescription?: string }[];
+}
+
+export const formFields: FormsField[] = [
+  {
+    id: 'message',
+    label: 'Message*',
+    type: 'text',
+    placeholder: 'Enter flow message',
+    required: true,
+  },
+  {
+    id: 'allow_custom_feedback',
+    label: '',
+    type: 'checkbox',
+    options: [{ label: 'Allow Custom Input', value: 'allow_custom_feedback' }],
+  },
+  {
+    id: 'name',
+    label: 'Name*',
+    type: 'text',
+    placeholder: 'Enter flow name',
+    required: true,
+  },
+  { id: 'priority', label: 'Priority*', type: 'number', required: true },
+  {
+    id: 'description',
+    label: 'Description',
+    type: 'textarea',
+    placeholder: 'Enter detailed description about the flow',
+    required: false,
+  },
+  {
+    id: 'terminate',
+    label: '',
+    type: 'checkbox',
+    options: [{ label: 'Terminate', value: 'terminate' }],
+  },
+  {
+    id: 'validate',
+    label: '',
+    type: 'checkbox',
+    options: [{ label: 'Validate', value: 'validate' }],
+  },
+];

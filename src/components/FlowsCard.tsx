@@ -23,11 +23,12 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const BaseUrl = process.env.BASE_URL;
 
+  // Fetching flows with a filter for parent_id null and using useCallback for memoization
   const fetchFlows = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${BaseUrl}/flows?skip=${skip}&limit=${limit}&status_eq=${status}&name_like=${searchQuery}`,
+        `${BaseUrl}/flows?skip=${skip}&limit=${limit}&status_eq=${status}&name_like=${searchQuery}&parent_id_eq=null`,
       );
       if (!response.ok) throw new Error('Failed to fetch flows');
 
@@ -40,19 +41,20 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
     }
   }, [BaseUrl, skip, limit, status, searchQuery]);
 
+  // Only re-fetch when skip, limit, status, or searchQuery changes
   useEffect(() => {
     fetchFlows();
   }, [fetchFlows]);
 
   const handleNext = () => {
     if (flows.length === limit) {
-      setSkip(skip + limit);
+      setSkip((prevSkip) => prevSkip + limit);
     }
   };
 
   const handlePrevious = () => {
-    if (skip - limit >= 0) {
-      setSkip(skip - limit);
+    if (skip > 0) {
+      setSkip((prevSkip) => Math.max(prevSkip - limit, 0));
     }
   };
 
@@ -68,9 +70,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          is_disabled: newStatus,
-        }),
+        body: JSON.stringify({ is_disabled: newStatus }),
       });
 
       if (!response.ok) {
@@ -83,8 +83,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
         text: `The flow has been ${newStatus ? 'Disabled' : 'Enabled'}.`,
       });
 
-      // Refetch flows after status change
-      fetchFlows();
+      fetchFlows(); // Refetch flows after status change
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -146,7 +145,10 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
                       className="rounded border p-4 hover:border-gray-200 hover:bg-gray-200"
                     >
                       <Link
-                        href={`/flows/flowcanvas?flowId=${flow.id}`}
+                        href={{
+                          pathname: `/flows/flowcanvas`,
+                          query: { flowId: flow.id },
+                        }}
                         className="text-md font-semibold text-black"
                       >
                         {flow.name}
@@ -156,7 +158,6 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
                           {flow.description}
                         </p>
                         <label className="flex cursor-pointer items-center">
-                          {/* Switch component */}
                           <span className="mx-4 text-sm text-gray-700">
                             {flow.is_disabled ? 'Disabled' : 'Enabled'}
                           </span>

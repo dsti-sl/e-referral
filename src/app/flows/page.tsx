@@ -1,6 +1,6 @@
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
+import React, { useState, useEffect, useCallback } from 'react';
 import MenuCard from '@/components/MenuCard';
 import FlowsCard from '@/components/FlowsCard';
 import Button from '@/components/Button';
@@ -110,8 +110,7 @@ export default function FlowsPage() {
         validator: data.validator || null,
         terminator: data.terminator || null,
       };
-      setIsLoading(true);
-      setIsDrawerOpen(false);
+
       try {
         const response = await fetch(`${BaseUrl}/flows`, {
           method: 'POST',
@@ -127,12 +126,10 @@ export default function FlowsPage() {
             icon: 'error',
             confirmButtonText: 'OK',
           });
-          setIsLoading(false);
           return;
         }
 
         const result = await response.json();
-        setIsLoading(false);
 
         // Show success alert
         Swal.fire({
@@ -147,14 +144,15 @@ export default function FlowsPage() {
           Active: [...prevData.Active, result],
         }));
       } catch (err) {
+        console.error('Failed to save flow:', err);
+
         // Show error alert
         Swal.fire({
           title: 'Error!',
-          text: err?.message || 'An unexpected error occurred.',
+          text: err.message || 'An unexpected error occurred.',
           icon: 'error',
           confirmButtonText: 'OK',
         });
-        setIsLoading(false);
       } finally {
         setIsDrawerOpen(false);
       }
@@ -164,7 +162,6 @@ export default function FlowsPage() {
 
   const fetchFlows = useCallback(async () => {
     try {
-      setIsLoading(true);
       const response = await fetch(`${BaseUrl}/flows`);
       if (!response.ok) throw new Error('Failed to fetch flows');
 
@@ -187,9 +184,13 @@ export default function FlowsPage() {
         Archived: archivedFlows,
         Deleted: deletedFlows,
       });
-      setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
+      Swal.fire({
+        title: 'Error!',
+        text: error.detail || 'An unexpected error occurred.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
     }
   }, [BaseUrl]);
 
@@ -222,7 +223,7 @@ export default function FlowsPage() {
           onClick={() => handleDrawerToggle('medium', 'right')}
           className="rounded-18 flex items-center gap-1 bg-black px-2 py-2 text-white hover:bg-white hover:text-black"
         >
-          Create Flow
+          <span>Create Flow</span>
         </Button>
       </div>
       <Drawer

@@ -201,42 +201,49 @@ const FlowCanvas: React.FC = () => {
           column.isActive ? (
             <div
               key={column.id}
-              className="rounded-lg border bg-[rgba(20,13,13,0.81)] p-4"
+              className="rounded-lg border bg-[rgba(20,13,13,0.81)] p-8"
             >
               <h2 className="text-center text-lg font-semibold text-white">
                 {column.name}
               </h2>
-              <ul className="mt-4 space-y-2">
+
+              <ul className="mt-4 space-y-4">
                 {column.nodes.map((node: any) => (
                   <li
                     key={node.id}
-                    className="group relative cursor-pointer rounded p-1 hover:bg-erefer-rose"
+                    className="group relative cursor-pointer rounded-lg p-2 hover:bg-erefer-rose"
                     onClick={() => handleNodeClick(column.id, node.id)}
                   >
-                    {node.priority && <span>{node.priority}. </span>}
-                    {node.name}
-                    <div className="absolute right-2 top-2 hidden space-x-2 group-hover:flex">
-                      <EditIcon
-                        className="h-5 w-5 cursor-pointer"
-                        onClick={() => handleEdit(node)}
-                      />
-                      <Trash2Icon
-                        className="h-5 w-5 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteNodeAndChildren(column.id, node.id);
-                        }}
-                      />
+                    <div className="flex items-start justify-between">
+                      <div className="text-lg font-semibold">
+                        {node.priority && <span>{node.priority}. </span>}
+                        {node.name}
+                      </div>
+                      <div className="absolute right-2 top-2 mt-1 hidden space-x-2 border-gray-300 group-hover:flex">
+                        <EditIcon
+                          className="h-5 w-5 cursor-pointer"
+                          onClick={() => handleEdit(node)}
+                        />
+                        <Trash2Icon
+                          className="h-5 w-5 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteNodeAndChildren(column.id, node.id);
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      {node.allow_custom_feedback && (
-                        <>This flow has custom feedback</>
-                      )}
-                    </div>
+
+                    {node.allow_custom_feedback && (
+                      <div className="mt-2 rounded-md bg-green-100 p-2 text-green-700">
+                        Custom feedback enabled
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
-              {column.isActive && (
+
+              {column.isActive && columns.length <= 5 && (
                 <Button
                   onClick={() => {
                     setNodeToEdit(null); // Clear nodeToEdit for adding a new node

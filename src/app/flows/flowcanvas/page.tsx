@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Drawer from '@/components/ui/Drawer';
 import Button from '@/components/Button';
 import Forms from '@/components/ui/Forms';
-import { Trash2Icon, ArrowLeft, EditIcon } from 'lucide-react';
+import { Trash2Icon, ArrowLeft, EditIcon, CirclePlusIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { formFields } from '@/utils/helpers';
@@ -28,6 +28,7 @@ interface Column {
   name: string;
   nodes: NodeData[];
   isActive: boolean;
+  showCustomFeedback?: boolean;
 }
 
 const initialColumns: Column[] = [
@@ -44,9 +45,12 @@ const FlowCanvas: React.FC = () => {
   const BaseUrl = process.env.BASE_URL;
 
   const [columns, setColumns] = useState<Column[]>(initialColumns);
+  const [flowPath, setFlowPath] = useState<string[]>([]); // Track the flow path (ancestors + selected node)
+  const [customFeedbackNodeId, setCustomFeedbackNodeId] = useState<
+    string | null
+  >(null); // Track the node with custom feedback
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [clickedNodes, setClickedNodes] = useState<string[]>([]);
   const [nodeToEdit, setNodeToEdit] = useState<NodeData | null>(null);
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
 
@@ -87,10 +91,22 @@ const FlowCanvas: React.FC = () => {
     }
   };
 
+  // Handle node click event
   const handleNodeClick = async (columnId: string, nodeId: string) => {
     const currentIndex = columns.findIndex((col) => col.id === columnId);
 
-    // Show only the next column
+    const clickedNode = columns
+      .find((col) => col.id === columnId)
+      ?.nodes.find((node) => node.id === nodeId);
+
+    if (clickedNode?.allow_custom_feedback) {
+      setCustomFeedbackNodeId(nodeId);
+    } else {
+      setCustomFeedbackNodeId(null);
+    }
+
+    updateFlowPath(nodeId);
+
     setColumns((prevColumns) =>
       prevColumns.map((col, index) => ({
         ...col,
@@ -99,7 +115,6 @@ const FlowCanvas: React.FC = () => {
     );
 
     setSelectedNodeId(nodeId);
-    setClickedNodes([nodeId]);
 
     const nextColumnIndex = currentIndex + 1;
     if (nextColumnIndex < columns.length) {
@@ -109,12 +124,34 @@ const FlowCanvas: React.FC = () => {
     }
   };
 
+  // Function to update the flow path (only ancestors + selected node)
+  const updateFlowPath = (nodeId: string) => {
+    const updatedPath: string[] = [];
+
+    // Find and add the ancestors to the path
+    let currentNode = columns
+      .flatMap((col) => col.nodes)
+      .find((node) => node.id === nodeId);
+    while (currentNode) {
+      updatedPath.unshift(currentNode.id as string);
+      currentNode = columns
+        .flatMap((col) => col.nodes)
+        .find((node) => node.id === currentNode?.parent_id);
+    }
+
+    // Add the selected node to the path
+    updatedPath.push(nodeId);
+
+    // Set the new flow path (ancestors + selected node)
+    setFlowPath(updatedPath);
+  };
+
+  // Handle node add/edit
   const handleAddOrEditNode = async (data: NodeData) => {
     const parentId = selectedNodeId || flowId;
     const newNode = {
       ...data,
       parent_id: parentId,
-      allow_custom_feedback: data.allow_custom_feedback,
     };
 
     try {
@@ -154,6 +191,7 @@ const FlowCanvas: React.FC = () => {
     }
   };
 
+  // Delete node and its children
   const deleteNodeAndChildren = (columnId: string, nodeId: string) => {
     const nodesToDelete = new Set<string>();
     const collectNodesToDelete = (currentNodeId: string) => {
@@ -161,7 +199,7 @@ const FlowCanvas: React.FC = () => {
       columns.forEach((column) => {
         column.nodes.forEach((node) => {
           if (node.parent_id === currentNodeId) {
-            collectNodesToDelete(node.id);
+            collectNodesToDelete(node.id as string);
           }
         });
       });
@@ -176,10 +214,10 @@ const FlowCanvas: React.FC = () => {
     );
   };
 
+  // Handle edit click event
   const handleEdit = (node: NodeData) => {
     setNodeToEdit(node);
     setIsDrawerOpen(true);
-    console.log('node =>', node);
   };
 
   return (
@@ -197,61 +235,76 @@ const FlowCanvas: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-5 gap-4">
-        {columns.map((column) =>
+        {columns.map((column, colIndex) =>
           column.isActive ? (
             <div
               key={column.id}
-              className="rounded-lg border bg-[rgba(20,13,13,0.81)] p-8"
+              className="flex flex-col justify-between rounded-lg border bg-[rgba(20,13,13,0.81)] p-8"
             >
-              <h2 className="text-center text-lg font-semibold text-white">
-                {column.name}
-              </h2>
+              <div>
+                <h2 className="text-center text-lg font-semibold text-white">
+                  {column.name}
+                </h2>
 
-              <ul className="mt-4 space-y-4">
-                {column.nodes.map((node: any) => (
-                  <li
-                    key={node.id}
-                    className="group relative cursor-pointer rounded-lg p-2 hover:bg-erefer-rose"
-                    onClick={() => handleNodeClick(column.id, node.id)}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="text-lg font-semibold">
-                        {node.priority && <span>{node.priority}. </span>}
-                        {node.name}
+                <ul className="mt-4 space-y-4">
+                  {column.nodes.map((node: NodeData) => (
+                    <li
+                      key={node.id}
+                      className={`group relative cursor-pointer rounded-lg p-2 ${
+                        flowPath.includes(node.id as string)
+                          ? 'bg-erefer-light'
+                          : 'hover:bg-erefer-rose'
+                      }`}
+                      onClick={() =>
+                        handleNodeClick(column.id, node.id as string)
+                      }
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="text-lg font-semibold">
+                          {node.priority && <span>{node.priority}. </span>}
+                          {node.name}
+                        </div>
+                        <div className="absolute right-2 top-2 mt-1 hidden space-x-2 border-gray-300 group-hover:flex">
+                          <EditIcon
+                            className="h-5 w-5 cursor-pointer"
+                            onClick={() => handleEdit(node)}
+                          />
+                          <Trash2Icon
+                            className="h-5 w-5 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteNodeAndChildren(
+                                column.id,
+                                node.id as string,
+                              );
+                            }}
+                          />
+                        </div>
                       </div>
-                      <div className="absolute right-2 top-2 mt-1 hidden space-x-2 border-gray-300 group-hover:flex">
-                        <EditIcon
-                          className="h-5 w-5 cursor-pointer"
-                          onClick={() => handleEdit(node)}
-                        />
-                        <Trash2Icon
-                          className="h-5 w-5 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteNodeAndChildren(column.id, node.id);
-                          }}
-                        />
-                      </div>
-                    </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-                    {node.allow_custom_feedback && (
-                      <div className="mt-2 rounded-md bg-green-100 p-2 text-green-700">
-                        Custom feedback enabled
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
+              {/* this is the implementation for the custom feedback enabled. But there are issues with it's persistence. */}
+              {colIndex === currentColumnIndex + 1 && customFeedbackNodeId && (
+                <div className="text-white-200 mt-2 rounded-lg text-center">
+                  Custom feedback enabled
+                </div>
+              )}
 
               {column.isActive && columns.length <= 5 && (
                 <Button
                   onClick={() => {
-                    setNodeToEdit(null); // Clear nodeToEdit for adding a new node
+                    setNodeToEdit(null);
                     setIsDrawerOpen(true);
                   }}
-                  className="text-black-500 mt-2 w-full bg-white hover:bg-erefer-light hover:text-white"
+                  className="mt-2 flex w-full items-center justify-center bg-erefer-rose text-white hover:bg-erefer-light hover:text-black"
                 >
-                  Add Prompt to {column.name}
+                  <span className="flex items-center">
+                    <CirclePlusIcon className="mr-2" />
+                    Prompt to {column.name}
+                  </span>
                 </Button>
               )}
             </div>

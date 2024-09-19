@@ -243,7 +243,7 @@ const FlowCanvas: React.FC = () => {
                 ))}
               </ul>
 
-              {column.isActive && (
+              {column.isActive && columns.length <= 5 && (
                 <Button
                   onClick={() => {
                     setNodeToEdit(null); // Clear nodeToEdit for adding a new node

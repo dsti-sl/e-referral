@@ -1,5 +1,4 @@
-import { Home, Workflow } from 'lucide-react';
-import { LogOutIcon } from 'lucide-react';
+import { Home, Workflow, LogOutIcon } from 'lucide-react';
 
 export default function Sidebar() {
   return (
@@ -25,15 +24,6 @@ export default function Sidebar() {
       <button className="m-auto mb-2 mt-72 pt-72">
         <LogOutIcon className="size-8 cursor-pointer object-cover transition-transform duration-300 hover:scale-110 hover:bg-white hover:bg-opacity-20 hover:text-erefer-rose hover:shadow" />
       </button>
-      <div className="mt-30 pt-30 h-13 w-13 m-auto size-12 object-cover transition-transform duration-300 hover:scale-110 hover:shadow">
-        <a
-          href="https://www.dsti.gov.sl"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="dsti.png" alt="Logo" />
-        </a>
-      </div>
     </div>
   );
 }

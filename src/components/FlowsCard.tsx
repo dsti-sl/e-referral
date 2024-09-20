@@ -58,41 +58,6 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
     }
   };
 
-  const handleToggle = async (id: number) => {
-    const flow = flows.find((flow) => flow.id === id);
-    if (!flow) return;
-
-    const newStatus = !flow.is_disabled;
-
-    try {
-      const response = await fetch(`${BaseUrl}/flows/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ is_disabled: newStatus }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update flow status: ${response.statusText}`);
-      }
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Status Updated',
-        text: `The flow has been ${newStatus ? 'Disabled' : 'Enabled'}.`,
-      });
-
-      fetchFlows(); // Refetch flows after status change
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Update Failed',
-        text: 'There was an error updating the flow status. Please try again.',
-      });
-    }
-  };
-
   const handleSearch = () => {
     setSkip(0); // Reset pagination when searching
     fetchFlows();
@@ -158,10 +123,10 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
                           {flow.description}
                         </p>
                         <label className="flex cursor-pointer items-center">
-                          <span className="mx-4 text-sm text-gray-700">
+                          {/* <span className="mx-4 text-sm text-gray-700">
                             {flow.is_disabled ? 'Disabled' : 'Enabled'}
-                          </span>
-                          <div
+                          </span> */}
+                          {/* <div
                             className={`relative inline-block h-6 w-11 ${
                               flow.is_disabled ? 'bg-gray-400' : 'bg-green-600'
                             } rounded-full transition-colors duration-200`}
@@ -172,7 +137,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
                                 flow.is_disabled ? 'translate-x-5' : ''
                               }`}
                             />
-                          </div>
+                          </div> */}
                         </label>
                       </div>
                     </li>

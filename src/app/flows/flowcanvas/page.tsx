@@ -320,7 +320,7 @@ const FlowCanvas: React.FC = () => {
 
   return (
     <div className="p-10">
-      <div className="flex items-center">
+      <div className="mb-2 flex items-center">
         <Link
           href="/flows"
           className="mr-2 text-sm text-gray-900 hover:text-black"

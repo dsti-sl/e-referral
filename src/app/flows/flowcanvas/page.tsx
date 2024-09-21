@@ -28,15 +28,46 @@ interface Column {
   name: string;
   nodes: NodeData[];
   isActive: boolean;
+  allowUserFeedback: boolean;
   showCustomFeedback?: boolean;
 }
 
 const initialColumns: Column[] = [
-  { id: 'col-1', name: 'Initialize Flow', nodes: [], isActive: true },
-  { id: 'col-2', name: '', nodes: [], isActive: false },
-  { id: 'col-3', name: '', nodes: [], isActive: false },
-  { id: 'col-4', name: '', nodes: [], isActive: false },
-  { id: 'col-5', name: '', nodes: [], isActive: false },
+  {
+    id: 'col-1',
+    name: 'Initialize Flow',
+    nodes: [],
+    isActive: true,
+    allowUserFeedback: false,
+  },
+  {
+    id: 'col-2',
+    name: '',
+    nodes: [],
+    isActive: false,
+    allowUserFeedback: false,
+  },
+  {
+    id: 'col-3',
+    name: '',
+    nodes: [],
+    isActive: false,
+    allowUserFeedback: false,
+  },
+  {
+    id: 'col-4',
+    name: '',
+    nodes: [],
+    isActive: false,
+    allowUserFeedback: false,
+  },
+  {
+    id: 'col-5',
+    name: '',
+    nodes: [],
+    isActive: false,
+    allowUserFeedback: false,
+  },
 ];
 
 const FlowCanvas: React.FC = () => {
@@ -67,22 +98,33 @@ const FlowCanvas: React.FC = () => {
     selectedNodeId: string | null,
   ) => {
     try {
-      const response = await fetch(`${BaseUrl}/flows/${parentId}`);
+      const response = await fetch(
+        `${BaseUrl}/flows/${parentId}?is_disabled_eq=false`,
+      );
       if (!response.ok) throw new Error('Failed to fetch descendants');
       const result = await response.json();
 
       const filteredDescendants = selectedNodeId
         ? result.descendants.filter(
-            (descendant: NodeData) => descendant.parent_id === selectedNodeId,
+            (descendant: NodeData) =>
+              descendant.parent_id === selectedNodeId &&
+              descendant.is_disabled === false,
           )
         : result.descendants.filter(
-            (descendant: NodeData) => descendant.parent_id == flowId,
+            (descendant: NodeData) =>
+              descendant.parent_id == flowId &&
+              descendant.is_disabled === false,
           );
 
       setColumns((prevColumns) =>
         prevColumns.map((col) =>
           col.id === columnId
-            ? { ...col, nodes: filteredDescendants || [], name: result.name }
+            ? {
+                ...col,
+                nodes: filteredDescendants || [],
+                name: result.name,
+                allowUserFeedback: result.allow_custom_feedback || false,
+              }
             : col,
         ),
       );
@@ -148,6 +190,7 @@ const FlowCanvas: React.FC = () => {
 
   // Handle node add/edit
   const handleAddOrEditNode = async (data: NodeData) => {
+    console.log('selectedNodeId', selectedNodeId);
     const parentId = selectedNodeId || flowId;
     const newNode = {
       ...data,
@@ -192,26 +235,69 @@ const FlowCanvas: React.FC = () => {
   };
 
   // Delete node and its children
-  const deleteNodeAndChildren = (columnId: string, nodeId: string) => {
+  const deleteNodeAndChildren = async (columnId: string, nodeId: string) => {
     const nodesToDelete = new Set<string>();
-    const collectNodesToDelete = (currentNodeId: string) => {
-      nodesToDelete.add(currentNodeId);
-      columns.forEach((column) => {
-        column.nodes.forEach((node) => {
-          if (node.parent_id === currentNodeId) {
-            collectNodesToDelete(node.id as string);
-          }
-        });
-      });
-    };
-    collectNodesToDelete(nodeId);
 
-    setColumns((prevColumns) =>
-      prevColumns.map((column) => ({
-        ...column,
-        nodes: column.nodes.filter((node) => !nodesToDelete.has(node.id)),
-      })),
-    );
+    try {
+      // Collect nodes to delete (node and its descendants)
+      const collectNodesToDelete = (currentNodeId: string) => {
+        nodesToDelete.add(currentNodeId);
+        columns.forEach((column) => {
+          column.nodes.forEach((node) => {
+            if (node.parent_id === currentNodeId) {
+              collectNodesToDelete(node.id as string);
+            }
+          });
+        });
+      };
+      collectNodesToDelete(nodeId);
+
+      // Delete nodes from the server one by one
+      for (const id of nodesToDelete) {
+        const response = await fetch(`${BaseUrl}/flows/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          Swal.fire({
+            title: 'Error!',
+            text: errorData.detail || 'An error occurred while deleting.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+          return; // Stop further execution if an error occurs
+        }
+      }
+
+      // Show success message after all nodes are deleted
+      Swal.fire({
+        title: 'Success!',
+        text: 'Node and its children were successfully deleted.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+
+      // Remove the deleted nodes from the state
+      setColumns((prevColumns) =>
+        prevColumns.map((column) => ({
+          ...column,
+          nodes: column.nodes.filter((node) => !nodesToDelete.has(node.id)),
+        })),
+      );
+    } catch (error) {
+      console.error('Error deleting node and children:', error);
+      Swal.fire({
+        title: 'Error!',
+        text: 'An unexpected error occurred while deleting.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      setIsDrawerOpen(false); // Close the drawer after the operation
+      setNodeToEdit(null); // Clear the nodeToEdit state
+    }
   };
 
   // Handle edit click event
@@ -242,9 +328,15 @@ const FlowCanvas: React.FC = () => {
               className="flex flex-col justify-between rounded-lg border bg-[rgba(20,13,13,0.81)] p-8"
             >
               <div>
-                <h2 className="text-center text-lg font-semibold text-white">
+                <h2 className={`} text-center text-lg font-semibold`}>
                   {column.name}
                 </h2>
+
+                {column.allowUserFeedback && (
+                  <p className="text-center text-sm text-gray-200">
+                    (Allows custom feedback)
+                  </p>
+                )}
 
                 <ul className="mt-4 space-y-4">
                   {column.nodes.map((node: NodeData) => (
@@ -302,7 +394,7 @@ const FlowCanvas: React.FC = () => {
                 >
                   <span className="flex items-center">
                     <CirclePlusIcon className="mr-2" />
-                    Prompt to {column.name}
+                    Add Prompt
                   </span>
                 </Button>
               )}

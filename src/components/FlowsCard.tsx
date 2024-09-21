@@ -28,7 +28,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${BaseUrl}/flows?skip=${skip}&limit=${limit}&status_eq=${status}&name_like=${searchQuery}&parent_id_eq=null`,
+        `${BaseUrl}/flows?skip=${skip}&limit=${limit}&status_eq=${status}&name_like=${searchQuery}&parent_id_eq=null&is_disabled=false&sort_by=updated&sort_order=desc`,
       );
       if (!response.ok) throw new Error('Failed to fetch flows');
 

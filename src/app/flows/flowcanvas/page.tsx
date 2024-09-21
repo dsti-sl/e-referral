@@ -90,7 +90,7 @@ const FlowCanvas: React.FC = () => {
     if (flowId) {
       fetchFlowDescendants(flowId, 'col-1', null);
     }
-  }, [flowId]);
+  }, [flowId, isDrawerOpen]);
 
   const fetchFlowDescendants = async (
     parentId: string,
@@ -300,10 +300,22 @@ const FlowCanvas: React.FC = () => {
     }
   };
 
-  // Handle edit click event
-  const handleEdit = (node: NodeData) => {
-    setNodeToEdit(node);
+  // Handle  click event
+  const handleAddNode = () => {
     setIsDrawerOpen(true);
+  };
+
+  const handleRefresh = async (colIndex: number) => {
+    if (colIndex === 0) {
+      setFlowPath([]);
+      setSelectedNodeId('');
+      return setColumns((prevColumns) =>
+        prevColumns.map((col, index) => ({
+          ...col,
+          isActive: index === colIndex,
+        })),
+      );
+    }
   };
 
   return (
@@ -328,7 +340,10 @@ const FlowCanvas: React.FC = () => {
               className="flex flex-col justify-between rounded-lg border bg-[rgba(20,13,13,0.81)] p-8"
             >
               <div>
-                <h2 className={`} text-center text-lg font-semibold`}>
+                <h2
+                  onClick={() => handleRefresh(colIndex)}
+                  className={`cursor-pointer text-center text-2xl font-semibold`}
+                >
                   {column.name}
                 </h2>
 
@@ -353,7 +368,7 @@ const FlowCanvas: React.FC = () => {
                     >
                       <div className="flex items-start justify-between">
                         <div className="text-lg font-semibold">
-                          {node.priority && <span>{node.priority}. </span>}
+                          {node.priority && <span>{node.priority} </span>}.
                           {node.name}
                         </div>
                         <div className="absolute right-2 top-2 mt-1 hidden cursor-pointer space-x-2 border-gray-300 group-hover:flex">
@@ -361,7 +376,7 @@ const FlowCanvas: React.FC = () => {
                             className="h-5 w-5 cursor-pointer"
                             onClick={() => handleEdit(node)}
                           /> */}
-                          <Trash2Icon
+                          {/* <Trash2Icon
                             className="h-5 w-5 cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -370,7 +385,7 @@ const FlowCanvas: React.FC = () => {
                                 node.id as string,
                               );
                             }}
-                          />
+                          /> */}
                         </div>
                       </div>
                     </li>
@@ -384,19 +399,30 @@ const FlowCanvas: React.FC = () => {
                   Custom feedback enabled
                 </div>
               )}
-              {column.isActive && colIndex < currentColumnIndex && (
+              {colIndex === 0 && !selectedNodeId ? (
                 <Button
-                  onClick={() => {
-                    setNodeToEdit(null);
-                    setIsDrawerOpen(true);
-                  }}
-                  className="mt-2 flex w-full items-center justify-center bg-erefer-rose text-white hover:bg-erefer-light hover:text-black"
+                  onClick={handleAddNode}
+                  className="mt-4 flex w-full items-center justify-center bg-erefer-rose text-white hover:bg-erefer-light hover:text-black"
                 >
-                  <span className="flex items-center">
-                    <CirclePlusIcon className="mr-2" />
-                    Add Prompt
-                  </span>
+                  <CirclePlusIcon className="mr-2" />
+                  Add Prompt Options to {column.name}
                 </Button>
+              ) : (
+                column.isActive &&
+                colIndex < currentColumnIndex && (
+                  <Button
+                    onClick={() => {
+                      setNodeToEdit(null);
+                      setIsDrawerOpen(true);
+                    }}
+                    className="mt-4 flex w-full items-center justify-center bg-erefer-rose text-white hover:bg-erefer-light hover:text-black"
+                  >
+                    <span className="flex items-center">
+                      <CirclePlusIcon className="mr-2" />
+                      Add Prompt
+                    </span>
+                  </Button>
+                )
               )}
             </div>
           ) : null,

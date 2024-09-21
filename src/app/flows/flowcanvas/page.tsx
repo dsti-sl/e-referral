@@ -253,7 +253,7 @@ const FlowCanvas: React.FC = () => {
                       className={`group relative cursor-pointer rounded-lg p-2 ${
                         flowPath.includes(node.id as string)
                           ? 'bg-erefer-light'
-                          : 'hover:bg-erefer-rose'
+                          : 'px-8 hover:bg-erefer-rose'
                       }`}
                       onClick={() =>
                         handleNodeClick(column.id, node.id as string)
@@ -264,11 +264,11 @@ const FlowCanvas: React.FC = () => {
                           {node.priority && <span>{node.priority}. </span>}
                           {node.name}
                         </div>
-                        <div className="absolute right-2 top-2 mt-1 hidden space-x-2 border-gray-300 group-hover:flex">
-                          <EditIcon
+                        <div className="absolute right-2 top-2 mt-1 hidden cursor-pointer space-x-2 border-gray-300 group-hover:flex">
+                          {/* <EditIcon
                             className="h-5 w-5 cursor-pointer"
                             onClick={() => handleEdit(node)}
-                          />
+                          /> */}
                           <Trash2Icon
                             className="h-5 w-5 cursor-pointer"
                             onClick={(e) => {
@@ -292,8 +292,7 @@ const FlowCanvas: React.FC = () => {
                   Custom feedback enabled
                 </div>
               )}
-
-              {column.isActive && columns.length <= 5 && (
+              {column.isActive && colIndex < currentColumnIndex && (
                 <Button
                   onClick={() => {
                     setNodeToEdit(null);

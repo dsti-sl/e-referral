@@ -5,8 +5,9 @@ import MenuCard from '@/components/MenuCard';
 import FlowsCard from '@/components/FlowsCard';
 import Button from '@/components/Button';
 import Drawer from '@/components/ui/Drawer';
-import Forms, { FormsField } from '@/components/ui/Forms';
+import Forms from '@/components/ui/Forms';
 import { LoadingView } from '@/components/shared/LoadingView';
+import { formFields } from '@/utils/helpers';
 
 export default function FlowsPage() {
   const [selectedStatus, setSelectedStatus] = useState<
@@ -29,60 +30,6 @@ export default function FlowsPage() {
   });
 
   const BaseUrl = process.env.BASE_URL;
-
-  const formFields: FormsField[] = [
-    {
-      id: 'message',
-      label: 'Message*',
-      type: 'text',
-      placeholder: 'Enter flow message',
-      required: true,
-    },
-    {
-      id: 'allow_custom_feedback',
-      label: '',
-      type: 'checkbox',
-      options: [
-        {
-          label: 'Allow Custom Input ',
-          labelDescription: '(Allowing users to enter custom input)',
-          value: 'allow_custom_feedback',
-        },
-      ],
-    },
-    {
-      id: 'name',
-      label: 'Name*',
-      type: 'text',
-      placeholder: 'Enter flow name',
-      required: true,
-    },
-    {
-      id: 'priority',
-      label: 'Priority*',
-      type: 'number',
-      required: true,
-    },
-    {
-      id: 'description',
-      label: 'Description*',
-      type: 'textarea',
-      placeholder: 'Enter detailed description about the flow',
-      required: true,
-    },
-    {
-      id: 'terminate',
-      label: '',
-      type: 'checkbox',
-      options: [{ label: 'Terminate', value: 'terminate' }],
-    },
-    {
-      id: 'validate',
-      label: '',
-      type: 'checkbox',
-      options: [{ label: 'Validate', value: 'validate' }],
-    },
-  ];
 
   const handleDrawerToggle = useCallback(
     (
@@ -162,7 +109,10 @@ export default function FlowsPage() {
 
   const fetchFlows = useCallback(async () => {
     try {
-      const response = await fetch(`${BaseUrl}/flows`);
+      const response = await fetch(
+        `${BaseUrl}/flows?parent_id_eq=null&is_disabled=false&sort_by=updated&sort_order=desc`,
+      );
+
       if (!response.ok) throw new Error('Failed to fetch flows');
 
       const data = await response.json();

@@ -67,23 +67,29 @@ export interface FormsField {
 
 export const formFields: FormsField[] = [
   {
-    id: 'message',
-    label: 'Message*',
+    id: 'name',
+    label: 'Name*',
     type: 'text',
-    placeholder: 'Enter flow message',
+    placeholder: 'Enter flow name',
     required: true,
   },
   {
     id: 'allow_custom_feedback',
     label: '',
     type: 'checkbox',
-    options: [{ label: 'Allow Custom Input', value: 'allow_custom_feedback' }],
+    options: [
+      {
+        label: 'Allow Custom Input ',
+        labelDescription: '(Allowing users to enter custom input)',
+        value: 'allow_custom_feedback',
+      },
+    ],
   },
   {
-    id: 'name',
-    label: 'Name*',
+    id: 'message',
+    label: 'Message*',
     type: 'text',
-    placeholder: 'Enter flow name',
+    placeholder: 'Enter flow message',
     required: true,
   },
   { id: 'priority', label: 'Priority*', type: 'number', required: true },

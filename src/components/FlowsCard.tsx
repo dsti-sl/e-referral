@@ -18,7 +18,7 @@ interface FlowsCardProps {
 const FlowsCard = ({ status }: FlowsCardProps) => {
   const [flows, setFlows] = useState<Flow[]>([]);
   const [skip, setSkip] = useState(0); // Pagination state
-  const [limit] = useState(10); // Number of records per page
+  const [limit] = useState(6); // Number of records per page
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState(''); // Search query state
   const BaseUrl = process.env.BASE_URL;
@@ -28,7 +28,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${BaseUrl}/flows?skip=${skip}&limit=${limit}&status_eq=${status}&name_like=${searchQuery}&parent_id_eq=null`,
+        `${BaseUrl}/flows?skip=${skip}&limit=${limit}&status_eq=${status}&name_like=${searchQuery}&parent_id_eq=null&is_disabled=false&sort_by=updated&sort_order=desc`,
       );
       if (!response.ok) throw new Error('Failed to fetch flows');
 
@@ -72,7 +72,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
     <>
       <h2 className="mb-4 text-lg font-semibold text-black">{status} Flows</h2>
       <div className="mb-4 flex items-center space-x-2">
-        <div className="relative w-full">
+        <div className="sticky w-full">
           <input
             type="text"
             placeholder="Search by name"

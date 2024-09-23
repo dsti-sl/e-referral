@@ -8,6 +8,8 @@ import { Trash2Icon, ArrowLeft, EditIcon, CirclePlusIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { formFields } from '@/utils/helpers';
+import FloatButton from '@/components/FloatButton';
+import MobileFlowSimulator from '@/components/MobileSimulator';
 
 interface NodeData {
   id?: string;
@@ -80,7 +82,8 @@ const FlowCanvas: React.FC = () => {
   const [customFeedbackNodeId, setCustomFeedbackNodeId] = useState<
     string | null
   >(null); // Track the node with custom feedback
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // For the Add Node Drawer
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false); // For the Mobile Simulator Drawer
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [nodeToEdit, setNodeToEdit] = useState<NodeData | null>(null);
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
@@ -190,7 +193,6 @@ const FlowCanvas: React.FC = () => {
 
   // Handle node add/edit
   const handleAddOrEditNode = async (data: NodeData) => {
-    console.log('selectedNodeId', selectedNodeId);
     const parentId = selectedNodeId || flowId;
     const newNode = {
       ...data,
@@ -300,7 +302,7 @@ const FlowCanvas: React.FC = () => {
     }
   };
 
-  // Handle  click event
+  // Handle Add Node click event
   const handleAddNode = () => {
     setIsDrawerOpen(true);
   };
@@ -337,7 +339,7 @@ const FlowCanvas: React.FC = () => {
           column.isActive ? (
             <div
               key={column.id}
-              className="flex flex-col justify-between rounded-lg border bg-[rgba(20,13,13,0.81)] p-8"
+              className="flex flex-col justify-between rounded-lg border bg-[rgba(20,13,13,0.81)] p-6"
             >
               <div>
                 <h2
@@ -347,19 +349,13 @@ const FlowCanvas: React.FC = () => {
                   {column.name}
                 </h2>
 
-                {column.allowUserFeedback && (
-                  <p className="text-center text-sm text-gray-200">
-                    (Allows custom feedback)
-                  </p>
-                )}
-
                 <ul className="mt-4 space-y-4">
                   {column.nodes.map((node: NodeData) => (
                     <li
                       key={node.id}
                       className={`group relative cursor-pointer rounded-lg p-2 ${
                         flowPath.includes(node.id as string)
-                          ? 'bg-erefer-light'
+                          ? 'bg-erefer-light px-8'
                           : 'px-8 hover:bg-erefer-rose'
                       }`}
                       onClick={() =>
@@ -371,29 +367,16 @@ const FlowCanvas: React.FC = () => {
                           {node.priority && <span>{node.priority} </span>}.
                           {node.name}
                         </div>
-                        <div className="absolute right-2 top-2 mt-1 hidden cursor-pointer space-x-2 border-gray-300 group-hover:flex">
-                          {/* <EditIcon
-                            className="h-5 w-5 cursor-pointer"
-                            onClick={() => handleEdit(node)}
-                          /> */}
-                          {/* <Trash2Icon
-                            className="h-5 w-5 cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteNodeAndChildren(
-                                column.id,
-                                node.id as string,
-                              );
-                            }}
-                          /> */}
-                        </div>
                       </div>
                     </li>
                   ))}
                 </ul>
               </div>
-
-              {/* this is the implementation for the custom feedback enabled. But there are issues with it's persistence. */}
+              {column.allowUserFeedback && (
+                <p className="rounded-lg p-1 text-center text-sm text-green-100">
+                  Allows custom feedback
+                </p>
+              )}
               {colIndex === currentColumnIndex + 1 && customFeedbackNodeId && (
                 <div className="text-white-200 mt-2 rounded-lg text-center">
                   Custom feedback enabled
@@ -402,10 +385,9 @@ const FlowCanvas: React.FC = () => {
               {colIndex === 0 && !selectedNodeId ? (
                 <Button
                   onClick={handleAddNode}
-                  className="mt-4 flex w-full items-center justify-center bg-erefer-rose text-white hover:bg-erefer-light hover:text-black"
+                  className="mt-4 flex items-center justify-center rounded-full bg-erefer-rose p-3 text-white hover:bg-erefer-light hover:text-black"
                 >
-                  <CirclePlusIcon className="mr-2" />
-                  Add Prompt Options to {column.name}
+                  <CirclePlusIcon className="h-6 w-6" />
                 </Button>
               ) : (
                 column.isActive &&
@@ -415,12 +397,9 @@ const FlowCanvas: React.FC = () => {
                       setNodeToEdit(null);
                       setIsDrawerOpen(true);
                     }}
-                    className="mt-4 flex w-full items-center justify-center bg-erefer-rose text-white hover:bg-erefer-light hover:text-black"
+                    className="mt-4 flex items-center justify-center rounded-full bg-erefer-rose p-3 text-white hover:bg-erefer-light hover:text-black"
                   >
-                    <span className="flex items-center">
-                      <CirclePlusIcon className="mr-2" />
-                      Add Prompt
-                    </span>
+                    <CirclePlusIcon className="h-6 w-6" />
                   </Button>
                 )
               )}
@@ -429,6 +408,7 @@ const FlowCanvas: React.FC = () => {
         )}
       </div>
 
+      {/* Drawer for Add Node */}
       <Drawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
@@ -445,6 +425,44 @@ const FlowCanvas: React.FC = () => {
           onClose={() => setIsDrawerOpen(false)}
         />
       </Drawer>
+
+      {/* Drawer for Mobile Flow Simulator (styled as a mobile frame) */}
+      <div
+        className={`fixed right-20 top-1/4 h-[480px] w-72 transform rounded-lg bg-gray-900 text-white shadow-lg transition-transform duration-300 ${
+          isMobileDrawerOpen
+            ? 'translate-x-0'
+            : 'fixed inset-full translate-x-full translate-y-full'
+        }`}
+        style={{
+          border: '16px solid black',
+          borderRadius: '36px',
+          boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+        }}
+      >
+        <div className="p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">USSD Simulator</h3>
+            <button
+              className={`transform text-white shadow-lg transition-transform duration-300 ${
+                isMobileDrawerOpen
+                  ? 'translate-x-0'
+                  : 'fixed inset-full translate-x-full translate-y-full'
+              }`}
+              onClick={() => setIsMobileDrawerOpen(false)}
+            >
+              ✖
+            </button>
+          </div>
+
+          {/* Include the Mobile Flow Simulator */}
+          <MobileFlowSimulator />
+        </div>
+      </div>
+
+      {/* Floating Button to open Mobile Flow Simulator */}
+      {!isMobileDrawerOpen && (
+        <FloatButton onClick={() => setIsMobileDrawerOpen(true)} />
+      )}
     </div>
   );
 };

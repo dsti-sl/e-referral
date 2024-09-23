@@ -426,9 +426,9 @@ const FlowCanvas: React.FC = () => {
         />
       </Drawer>
 
-      {/* Drawer for Mobile Flow Simulator (styled as a mobile frame) */}
+      {/* Drawer for Mobile Flow Simulator (styled as a mobile frame (styling still in progress)) */}
       <div
-        className={`fixed right-20 top-1/4 h-[480px] w-72 transform rounded-lg bg-gray-900 text-white shadow-lg transition-transform duration-300 ${
+        className={`fixed right-20 top-1/4 h-[600px] w-80 transform rounded-lg bg-gray-900 text-white shadow-lg transition-transform duration-300 ${
           isMobileDrawerOpen
             ? 'translate-x-0'
             : 'fixed inset-full translate-x-full translate-y-full'
@@ -441,7 +441,9 @@ const FlowCanvas: React.FC = () => {
       >
         <div className="p-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">USSD Simulator</h3>
+            <h3 className="text-center text-lg font-semibold">
+              E-referral USSD Service
+            </h3>
             <button
               className={`transform text-white shadow-lg transition-transform duration-300 ${
                 isMobileDrawerOpen
@@ -454,12 +456,10 @@ const FlowCanvas: React.FC = () => {
             </button>
           </div>
 
-          {/* Include the Mobile Flow Simulator */}
           <MobileFlowSimulator />
         </div>
       </div>
 
-      {/* Floating Button to open Mobile Flow Simulator */}
       {!isMobileDrawerOpen && (
         <FloatButton onClick={() => setIsMobileDrawerOpen(true)} />
       )}

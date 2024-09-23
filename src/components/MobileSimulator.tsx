@@ -6,7 +6,7 @@ const MobileSimulator = () => {
   const [longLat, setLongLat] = useState('');
   const [userInput, setUserInput] = useState('');
   const [flowState, setFlowState] = useState(
-    'Welcome to the USSD service. Press 1 for Menu A, Press 2 for Menu B.',
+    'Welcome to the E-referral USSD service. Press 1 for Menu A, Press 2 for Menu B.',
   );
 
   // Toggle the collapsible panel for phone number and long-lat input
@@ -17,7 +17,7 @@ const MobileSimulator = () => {
   // Reset the flow back to the initial state
   const resetFlow = () => {
     setFlowState(
-      'Welcome to the USSD service. Press 1 for Menu A, Press 2 for Menu B.',
+      'Welcome to the E-referral USSD service. Press 1 for Menu A, Press 2 for Menu B.',
     );
     setUserInput('');
   };
@@ -46,7 +46,7 @@ const MobileSimulator = () => {
   return (
     <div className="mt-4">
       {/* Flow output - The mobile screen */}
-      <div className="flow-output h-32 rounded-lg bg-gray-700 p-3">
+      <div className="flow-output w-100 h-40 rounded-lg bg-gray-700 p-3">
         <p>{flowState}</p>
       </div>
 

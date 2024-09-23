@@ -1,3 +1,4 @@
+import { BASE_URL } from '@/lib/utils';
 import React, { useState } from 'react';
 
 const MobileSimulator = () => {
@@ -5,9 +6,11 @@ const MobileSimulator = () => {
   const [telNumber, setTelNumber] = useState('');
   const [longLat, setLongLat] = useState('');
   const [userInput, setUserInput] = useState('');
-  const [flowState, setFlowState] = useState(
-    'Welcome to the E-referral USSD service. Press 1 for Menu A, Press 2 for Menu B.',
-  );
+  const [menus, setMenus] = useState<{
+    options: Choice[];
+    title: string | null;
+  } | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Toggle the collapsible panel for phone number and long-lat input
   const togglePanel = () => {
@@ -16,9 +19,7 @@ const MobileSimulator = () => {
 
   // Reset the flow back to the initial state
   const resetFlow = () => {
-    setFlowState(
-      'Welcome to the E-referral USSD service. Press 1 for Menu A, Press 2 for Menu B.',
-    );
+    setMenus(null);
     setUserInput('');
   };
 
@@ -27,28 +28,49 @@ const MobileSimulator = () => {
     setUserInput(e.target.value);
   };
 
-  // Handle the "Send" button click to process the USSD option
-  const handleSendClick = () => {
-    if (userInput === '1') {
-      setFlowState(
-        'You selected Menu A. Press 1 for Option A1, Press 2 for Option A2.',
+  const getFlowMenu = async (flow_priority: number | string) => {
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `${BASE_URL}/channels/ussd?priority=${encodeURIComponent(flow_priority)}&initiator=${encodeURIComponent(telNumber)}&location=${encodeURIComponent(longLat)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
       );
-    } else if (userInput === '2') {
-      setFlowState(
-        'You selected Menu B. Press 1 for Option B1, Press 2 for Option B2.',
-      );
-    } else {
-      setFlowState('Invalid option. Please try again.');
+
+      if (response.status == 200) {
+        const data = await response.json();
+        setMenus(data);
+      }
+    } catch (error) {
+      console.log('Error:  ', error);
+    } finally {
+      setLoading(false);
     }
-    setUserInput(''); // Clear input field after submission
   };
 
   return (
     <div className="mt-4">
       {/* Flow output - The mobile screen */}
-      <div className="flow-output w-100 h-40 rounded-lg bg-gray-700 p-3">
-        <p>{flowState}</p>
-      </div>
+      {loading ? (
+        <div className="flex justify-center">
+          <div
+            className="h-12 w-12 animate-spin rounded-full border-4 border-t-4 border-gray-200"
+            style={{ borderTopColor: '#a85866' }}
+          />
+        </div>
+      ) : (
+        <div className="flow-output w-100 h-40 rounded-lg bg-gray-700 p-3">
+          <ChoiceListing
+            title={menus?.title as string}
+            choices={menus?.options}
+          />
+        </div>
+      )}
 
       {/* Input field for USSD options */}
       <div className="mt-4">
@@ -60,7 +82,10 @@ const MobileSimulator = () => {
           placeholder="Enter option..."
         />
         <button
-          onClick={handleSendClick}
+          disabled={loading || !userInput}
+          onClick={() => {
+            getFlowMenu(userInput);
+          }}
           className="mt-2 w-full rounded-md bg-erefer-rose p-2 text-white"
         >
           Send
@@ -111,6 +136,31 @@ const MobileSimulator = () => {
           />
         </div>
       )}
+    </div>
+  );
+};
+
+type Choice = {
+  priority: number;
+  message: string;
+};
+
+interface ChoiceListingProps {
+  title: string | undefined;
+  choices: Choice[] | undefined;
+}
+
+const ChoiceListing: React.FC<ChoiceListingProps> = ({ choices, title }) => {
+  return (
+    <div className="mt-4">
+      {title && <p>{title}</p>}
+      {choices &&
+        choices.map((choice, index) => (
+          <div key={index} className="flex gap-8">
+            <p>{choice.priority}</p>
+            <p> {choice.message}</p>
+          </div>
+        ))}
     </div>
   );
 };

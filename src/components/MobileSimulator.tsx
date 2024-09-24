@@ -79,7 +79,7 @@ const MobileSimulator = () => {
           type="text"
           value={userInput}
           onChange={handleInputChange}
-          className="w-full rounded-full p-3 pr-10 text-black"
+          className="w-full rounded-full p-2 pr-10 text-black"
           placeholder="Enter option..."
         />
         <button
@@ -87,7 +87,7 @@ const MobileSimulator = () => {
           onClick={() => {
             getFlowMenu(userInput);
           }}
-          className="mt-2 w-full rounded-md bg-erefer-rose p-2 text-white"
+          className="absolute right-2 top-1/2 mt-2 flex h-10 w-10 items-center justify-center rounded-full bg-erefer-rose text-white"
         >
           <SendHorizonal className="h-6 w-6" />
         </button>

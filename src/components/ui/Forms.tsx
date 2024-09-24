@@ -119,12 +119,12 @@ const Forms: React.FC<FormsProps> = ({ fields, data, onSave, onClose }) => {
       {/* Display dynamic fields based on checkbox selection */}
       {formState.terminate && (
         <div className="flex flex-col">
-          <label htmlFor="terminateUrl" className="text-gray-700">
+          <label htmlFor="terminator" className="text-gray-700">
             Terminate URL*
           </label>
           <input
-            id="terminateUrl"
-            name="terminateUrl"
+            id="terminator"
+            name="terminator"
             type="text"
             placeholder="Enter terminate URL"
             onChange={handleChange}

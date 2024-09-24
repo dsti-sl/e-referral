@@ -364,8 +364,14 @@ const FlowCanvas: React.FC = () => {
                     >
                       <div className="flex items-start justify-between">
                         <div className="text-lg font-semibold">
-                          {node.priority && <span>{node.priority} </span>}.
-                          {node.name}
+                          {
+                            <span>
+                              {Number(node.priority) === 0
+                                ? ''
+                                : `${node.priority}. `}{' '}
+                            </span>
+                          }
+                          {node.message}
                         </div>
                       </div>
                     </li>

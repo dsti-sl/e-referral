@@ -113,3 +113,16 @@ export const formFields: FormsField[] = [
     options: [{ label: 'Validate', value: 'validate' }],
   },
 ];
+
+export const extractDistrict = (location: string): string | null => {
+  // Split the string by commas
+  const parts = location?.split(',').map((part) => part?.trim());
+  if (parts?.length >= 3) {
+    return parts[2]; // retruns the third word(s) after  second comma
+  }
+  return null; // Return null if the location format is unexpected
+};
+
+export const roundToTwoDecimals = (number: number) => {
+  return Math.round(number * 100) / 100;
+};

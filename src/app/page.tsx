@@ -1,9 +1,18 @@
 'use client';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import Card from '@/components/Card';
-import { generateColors, Period, Service } from '@/utils/helpers';
+import {
+  generateColors,
+  Period,
+  roundToTwoDecimals,
+  extractDistrict,
+  Service,
+} from '@/utils/helpers';
 import DropdownMenu from '@/components/dashboard/DropdownMenu';
 import BarChart from '@/components/dashboard/BarChart';
+import Swal from 'sweetalert2';
+import LocationMap from '@/components/ui/LocationMap';
+import InitiatorActivity from '@/components/dashboard/InitiatorActivity';
 
 const data: Record<Service, Record<Period, number[]>> = {
   'Medical Services': {
@@ -71,6 +80,34 @@ const data: Record<Service, Record<Period, number[]>> = {
     'Last 24 Hours': [34, 39, 36, 43, 50, 90, 67, 68, 30, 70, 95],
     Monthly: [125, 90, 40, 110, 80, 135, 130, 145, 155],
   },
+};
+
+const generatePieData = (data: any[]) => {
+  const districtData: Record<string, number> = {};
+
+  data.forEach((session) => {
+    const district = extractDistrict(session.parameters.location_name);
+    if (district) {
+      if (!districtData[district]) {
+        districtData[district] = 0;
+      }
+      districtData[district] += session.request_count;
+    }
+  });
+
+  const labels = Object.keys(districtData);
+  const dataValues = Object.values(districtData);
+
+  return {
+    labels,
+    datasets: [
+      {
+        data: dataValues,
+        backgroundColor: generateColors(labels.length),
+        hoverBackgroundColor: generateColors(labels.length),
+      },
+    ],
+  };
 };
 
 const generateChartData = (period: Period, service: Service) => {
@@ -141,29 +178,87 @@ const generateChartData = (period: Period, service: Service) => {
 };
 
 export default function Home() {
-  const pieData = useMemo(() => {
-    const labels = [
-      'Bo',
-      'Western Area Urban',
-      'Kono',
-      'Kambia',
-      'Western Area Rural',
-    ];
-    return {
-      labels,
-      datasets: [
-        {
-          data: [300, 50, 100, 30, 10, null, null, null, null],
-          hoverOffset: 4,
-          backgroundColor: generateColors(labels.length),
-          hoverBackgroundColor: generateColors(labels.length),
-        },
-      ],
-    };
-  }, []);
+  const BaseUrl = process.env.BASE_URL;
+  const [stats, setStats] = useState({});
+  const [sessions, setSessions] = useState([]);
 
-  const totalSessionData = [{ name: 'Average Session Time', average: 300 }];
-  const dailySessionData = [{ name: 'Total Sessions', average: 200 }];
+  const pieData = useMemo(() => generatePieData(sessions), [sessions]);
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const response = await fetch(`${BaseUrl}/channels/sessions/stats`);
+
+      if (!response.ok) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'An unexpected error occurred.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      }
+      const data = await response.json();
+      setStats(data);
+    } catch (error) {
+      Swal.fire({
+        title: 'Error!',
+        text: error.detail || 'An unexpected error occurred.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
+  }, [BaseUrl]);
+
+  const fetchSessions = useCallback(async () => {
+    try {
+      const response = await fetch(`${BaseUrl}/channels/sessions/`);
+
+      if (!response.ok) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'An unexpected error occurred.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      }
+      const data = await response.json();
+      setSessions(data); // Populate with real data
+    } catch (error) {
+      Swal.fire({
+        title: 'Error!',
+        text: error.detail || 'An unexpected error occurred.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
+  }, [BaseUrl]);
+
+  useEffect(() => {
+    fetchStats();
+    fetchSessions();
+  }, [fetchStats, fetchSessions]);
+
+  const totalSessionData = [
+    {
+      name: 'Average Session Time',
+      average: roundToTwoDecimals(stats?.average_duration_minutes) + ' mins',
+    },
+  ];
+  const dailySessionData = [
+    { name: 'Total Sessions', average: stats?.total_sessions },
+  ];
+  const closedSessionData = [
+    { name: 'Closed Sessions', average: stats?.closed_sessions },
+  ];
+  const tolNumofRequest = [
+    {
+      name: 'Total number of Requests',
+      average: stats?.total_number_of_requests,
+    },
+  ];
+
+  const expireSession = [
+    { name: 'Expired Sessions', average: stats?.expired_sessions },
+  ];
 
   const [selectedPeriod, setSelectedPeriod] = useState<Period>('Daily');
   const [selectedService, setSelectedService] =
@@ -194,9 +289,24 @@ export default function Home() {
         data visualizations.
       </h5>
       <div className="flex w-full max-w-screen-lg flex-wrap">
+        <div className="flex w-full flex-wrap">
+          <div className="w-full p-1 sm:w-1/2 lg:w-1/3">
+            {/* Adjust width as needed */}
+            <Card topDisplay data={closedSessionData} />
+          </div>
+          <div className="w-full p-1 sm:w-1/2 lg:w-1/3">
+            {/* Adjust width as needed */}
+            <Card topDisplay data={tolNumofRequest} />
+          </div>
+          <div className="w-full p-1 sm:w-1/2 lg:w-1/3">
+            {/* Adjust width as needed */}
+            <Card topDisplay data={expireSession} />
+          </div>
+        </div>
+
         <div className="w-full flex-wrap px-4 sm:w-1/2 lg:w-4/12">
           {/* Card for Total Session */}
-          <div className="w-full sm:w-1/2 lg:w-full">
+          <div className="mb-10 w-full sm:w-1/2 lg:w-full">
             <Card data={totalSessionData} />
           </div>
 
@@ -207,11 +317,16 @@ export default function Home() {
         </div>
 
         {/* Card for Pie Chart */}
-        <div className="mb-10 w-full sm:w-1/2 lg:w-8/12">
-          <Card title="Locations" pieData={pieData} />
+        <div className="w-full sm:w-1/2 lg:w-8/12">
+          <Card title="Requests by Location" pieData={pieData} />
         </div>
       </div>
-      <div className="relative mt-8 w-full max-w-screen-lg">
+
+      <div className="relative w-full max-w-screen-lg">
+        <LocationMap data={sessions || []} />
+      </div>
+
+      {/* <div className="relative mt-8 w-full max-w-screen-lg">
         <div className="absolute right-0 top-0 flex space-x-4">
           <label className="mt-4 text-ellipsis text-xl">Services:</label>
           <DropdownMenu
@@ -231,7 +346,7 @@ export default function Home() {
             <BarChart data={chartData} />
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

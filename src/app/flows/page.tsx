@@ -45,6 +45,48 @@ export default function FlowsPage() {
   const handleDrawerClose = useCallback(() => {
     setIsDrawerOpen(false);
   }, []);
+  const fetchFlows = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `${BaseUrl}/flows?parent_id_eq=null&is_disabled=false&sort_by=updated&sort_order=desc`,
+      );
+
+      if (!response.ok)
+        return Swal.fire({
+          title: 'Error!',
+          text: error.detail || 'An unexpected error occurred.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+
+      const data = await response.json();
+
+      const activeFlows = data.filter(
+        (flow: any) => !flow.is_disabled && flow.priority >= 0,
+      );
+      const draftFlows = data.filter((flow: any) => flow.priority === 0);
+      const archivedFlows = data.filter(
+        (flow: any) => flow.is_disabled && flow.priority < 0,
+      );
+      const deletedFlows = data.filter(
+        (flow: any) => flow.is_disabled && flow.priority === -1,
+      );
+
+      setFlowsData({
+        Active: activeFlows,
+        Draft: draftFlows,
+        Archived: archivedFlows,
+        Deleted: deletedFlows,
+      });
+    } catch (error) {
+      Swal.fire({
+        title: 'Error!',
+        text: error.detail || 'An unexpected error occurred.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
+  }, [BaseUrl]);
 
   const handleSave = useCallback(
     async (data: { [key: string]: any }) => {
@@ -76,7 +118,7 @@ export default function FlowsPage() {
           return;
         }
 
-        const result = await response.json();
+        // const result = await response.json();
 
         // Show success alert
         Swal.fire({
@@ -86,9 +128,12 @@ export default function FlowsPage() {
           confirmButtonText: 'OK',
         });
 
+        const reslt = await fetchFlows();
+
+        // Update the local state with the new flow
         setFlowsData((prevData) => ({
           ...prevData,
-          Active: [...prevData.Active, result],
+          Active: [...prevData.Active, reslt],
         }));
       } catch (err) {
         console.error('Failed to save flow:', err);
@@ -104,49 +149,12 @@ export default function FlowsPage() {
         setIsDrawerOpen(false);
       }
     },
-    [BaseUrl],
+    [BaseUrl, fetchFlows],
   );
-
-  const fetchFlows = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `${BaseUrl}/flows?parent_id_eq=null&is_disabled=false&sort_by=updated&sort_order=desc`,
-      );
-
-      if (!response.ok) throw new Error('Failed to fetch flows');
-
-      const data = await response.json();
-
-      const activeFlows = data.filter(
-        (flow: any) => !flow.is_disabled && flow.priority >= 0,
-      );
-      const draftFlows = data.filter((flow: any) => flow.priority === 0);
-      const archivedFlows = data.filter(
-        (flow: any) => flow.is_disabled && flow.priority < 0,
-      );
-      const deletedFlows = data.filter(
-        (flow: any) => flow.is_disabled && flow.priority === -1,
-      );
-
-      setFlowsData({
-        Active: activeFlows,
-        Draft: draftFlows,
-        Archived: archivedFlows,
-        Deleted: deletedFlows,
-      });
-    } catch (error) {
-      Swal.fire({
-        title: 'Error!',
-        text: error.detail || 'An unexpected error occurred.',
-        icon: 'error',
-        confirmButtonText: 'OK',
-      });
-    }
-  }, [BaseUrl]);
 
   useEffect(() => {
     fetchFlows();
-  }, [fetchFlows]);
+  }, [flowsData, fetchFlows]);
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-between sm:w-full md:flex-row">

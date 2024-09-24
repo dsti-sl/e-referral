@@ -1,6 +1,6 @@
 import { BASE_URL } from '@/lib/utils';
 import React, { useState } from 'react';
-import { SendHorizonal, Home } from 'lucide-react';
+import { SendHorizonal, Home, ChevronDown, ChevronUp } from 'lucide-react';
 
 const MobileSimulator = () => {
   const [showPanel, setShowPanel] = useState(false);
@@ -65,7 +65,7 @@ const MobileSimulator = () => {
           />
         </div>
       ) : (
-        <div className="flow-output w-100 h-40 rounded-lg bg-gray-700 p-3">
+        <div className="flow-output w-100 h-[470px] rounded-lg bg-gray-700 p-3">
           <ChoiceListing
             title={menus?.title as string}
             choices={menus?.options}
@@ -79,7 +79,7 @@ const MobileSimulator = () => {
           type="text"
           value={userInput}
           onChange={handleInputChange}
-          className="w-full rounded-full p-2 pr-10 text-black"
+          className="w-full rounded-full p-3 pr-10 text-black"
           placeholder="Enter option..."
         />
         <button
@@ -87,22 +87,14 @@ const MobileSimulator = () => {
           onClick={() => {
             getFlowMenu(userInput);
           }}
-          className="absolute right-2 top-1/2 mt-2 flex h-10 w-10 items-center justify-center rounded-full bg-erefer-rose text-white"
+          className="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-full bg-erefer-rose p-2 text-white"
         >
           <SendHorizonal className="h-6 w-6" />
         </button>
       </div>
 
-      {/* Arrow button to toggle the collapsible panel */}
-      <button
-        className="arrow-button mt-4 w-full rounded-lg bg-erefer-rose p-2 text-center"
-        onClick={togglePanel}
-      >
-        {showPanel ? '▼' : '▲'}
-      </button>
-
       {/* Reset button */}
-      <div className="bottom-2/4 mt-4 flex items-center justify-center">
+      <div className="bottom-3/4 mt-2 flex items-center justify-center">
         <button
           onClick={resetFlow}
           className="r-2 mt-4 flex h-10 w-10 items-center justify-center rounded-full bg-erefer-rose text-white"
@@ -110,6 +102,18 @@ const MobileSimulator = () => {
           <Home className="h-6 w-6" />
         </button>
       </div>
+
+      {/* Arrow button to toggle the collapsible panel */}
+      <button
+        className="arrow-button text-gray mb-4 pb-4 text-center"
+        onClick={togglePanel}
+      >
+        {showPanel ? (
+          <ChevronDown className="text-gray-100" />
+        ) : (
+          <ChevronUp className="text-gray-800 hover:text-gray-100" />
+        )}
+      </button>
 
       {/* Collapsible panel with input fields */}
       {showPanel && (

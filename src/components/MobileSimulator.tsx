@@ -46,34 +46,39 @@ const MobileSimulator = () => {
   return (
     <div className="mt-4">
       {/* Flow output - The mobile screen */}
-      <div className="flow-output w-100 h-40 rounded-lg bg-gray-700 p-3">
+      <div className="flow-output w-100 h-52 rounded-lg bg-gray-700 p-3">
         <p>{flowState}</p>
       </div>
 
       {/* Input field for USSD options */}
-      <div className="mt-4">
+      <div className="relative mt-4">
         <input
           type="text"
           value={userInput}
           onChange={handleInputChange}
-          className="w-full rounded-md p-2 text-black"
+          className="w-full rounded-full p-3 pr-10 text-black"
           placeholder="Enter option..."
         />
         <button
           onClick={handleSendClick}
-          className="mt-2 w-full rounded-md bg-erefer-rose p-2 text-white"
+          className="absolute right-1 top-1/2 -translate-y-1/2 transform rounded-full bg-erefer-rose p-2 text-white"
         >
-          Send
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="h-6 w-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
+            />
+          </svg>
         </button>
       </div>
-
-      {/* Reset button */}
-      <button
-        onClick={resetFlow}
-        className="mt-4 w-full rounded-md bg-erefer-light p-2 text-black"
-      >
-        Reset Flow
-      </button>
 
       {/* Arrow button to toggle the collapsible panel */}
       <button
@@ -82,6 +87,29 @@ const MobileSimulator = () => {
       >
         {showPanel ? '▼' : '▲'}
       </button>
+
+      {/* Reset button */}
+      <div className="bottom-2/4 mt-4 flex items-center justify-center">
+        <button
+          onClick={resetFlow}
+          className="r-2 mt-4 flex h-10 w-10 items-center justify-center rounded-full bg-erefer-light text-black"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="h-6 w-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+            />
+          </svg>
+        </button>
+      </div>
 
       {/* Collapsible panel with input fields */}
       {showPanel && (

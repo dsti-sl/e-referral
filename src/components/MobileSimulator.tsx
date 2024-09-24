@@ -1,5 +1,6 @@
 import { BASE_URL } from '@/lib/utils';
 import React, { useState } from 'react';
+import { SendHorizonal, Home } from 'lucide-react';
 
 const MobileSimulator = () => {
   const [showPanel, setShowPanel] = useState(false);
@@ -73,12 +74,12 @@ const MobileSimulator = () => {
       )}
 
       {/* Input field for USSD options */}
-      <div className="mt-4">
+      <div className="relative mt-4">
         <input
           type="text"
           value={userInput}
           onChange={handleInputChange}
-          className="w-full rounded-md p-2 text-black"
+          className="w-full rounded-full p-3 pr-10 text-black"
           placeholder="Enter option..."
         />
         <button
@@ -88,17 +89,9 @@ const MobileSimulator = () => {
           }}
           className="mt-2 w-full rounded-md bg-erefer-rose p-2 text-white"
         >
-          Send
+          <SendHorizonal className="h-6 w-6" />
         </button>
       </div>
-
-      {/* Reset button */}
-      <button
-        onClick={resetFlow}
-        className="mt-4 w-full rounded-md bg-erefer-light p-2 text-black"
-      >
-        Reset Flow
-      </button>
 
       {/* Arrow button to toggle the collapsible panel */}
       <button
@@ -107,6 +100,16 @@ const MobileSimulator = () => {
       >
         {showPanel ? '▼' : '▲'}
       </button>
+
+      {/* Reset button */}
+      <div className="bottom-2/4 mt-4 flex items-center justify-center">
+        <button
+          onClick={resetFlow}
+          className="r-2 mt-4 flex h-10 w-10 items-center justify-center rounded-full bg-erefer-rose text-white"
+        >
+          <Home className="h-6 w-6" />
+        </button>
+      </div>
 
       {/* Collapsible panel with input fields */}
       {showPanel && (

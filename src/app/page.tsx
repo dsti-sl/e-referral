@@ -13,6 +13,7 @@ import BarChart from '@/components/dashboard/BarChart';
 import Swal from 'sweetalert2';
 import LocationMap from '@/components/ui/LocationMap';
 import InitiatorActivity from '@/components/dashboard/InitiatorActivity';
+import TimeSeriesChart from '@/components/dashboard/TimeSeries';
 
 const data: Record<Service, Record<Period, number[]>> = {
   'Medical Services': {
@@ -324,6 +325,10 @@ export default function Home() {
 
       <div className="relative w-full max-w-screen-lg">
         <LocationMap data={sessions || []} />
+      </div>
+
+      <div className="relative w-full max-w-screen-lg">
+        <TimeSeriesChart data={sessions || []} />
       </div>
 
       {/* <div className="relative mt-8 w-full max-w-screen-lg">

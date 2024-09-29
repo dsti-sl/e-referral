@@ -53,12 +53,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="flex h-screen overflow-hidden">
           <Sidebar />
-          <div className="flex w-full flex-1 flex-col">
+          <div className="flex w-screen flex-1 flex-col">
             <Header />
-            <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
+            <main className="w-screen flex-1 overflow-y-auto bg-gray-100 py-6">
               {children}
             </main>
-            <div className="h-15 w-full bg-white">
+            <div className="h-15 w-screen bg-white">
               <Footer />
             </div>
           </div>

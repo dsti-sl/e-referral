@@ -281,7 +281,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen flex-col items-center p-4 text-black">
+    <div className="flex h-screen flex-col items-center p-6 text-black">
       <div className="mb-4 text-3xl font-bold">
         Welcome to e-Refferal Pathways
       </div>
@@ -289,7 +289,7 @@ export default function Home() {
         e-Refferal Pathways Client Dashboard for creating and managing flows and
         data visualizations.
       </h5>
-      <div className="flex w-full max-w-screen-lg flex-wrap">
+      <div className="flex w-full max-w-screen-xl flex-wrap">
         <div className="flex w-full flex-wrap">
           <div className="w-full p-1 sm:w-1/2 lg:w-1/3">
             {/* Adjust width as needed */}
@@ -305,29 +305,29 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full flex-wrap px-4 sm:w-1/2 lg:w-4/12">
+        <div className="w-full px-4 py-4 sm:w-1/2 lg:w-4/12">
           {/* Card for Total Session */}
-          <div className="mb-10 w-full sm:w-1/2 lg:w-full">
+          <div className="mb-6 w-full sm:w-1/2 lg:w-full">
             <Card data={totalSessionData} />
           </div>
 
           {/* Card for Daily Session */}
-          <div className="-mt-24 w-full pt-11 sm:w-1/2 lg:w-full">
+          <div className="w-full scroll-pt-24 sm:w-1/2 lg:w-full">
             <Card data={dailySessionData} />
           </div>
         </div>
 
         {/* Card for Pie Chart */}
-        <div className="w-full sm:w-1/2 lg:w-8/12">
+        <div className="w-full py-4 sm:w-1/2 lg:w-8/12">
           <Card title="Requests by Location" pieData={pieData} />
         </div>
       </div>
 
-      <div className="relative w-full max-w-screen-lg">
+      <div className="w-full max-w-screen-xl">
         <LocationMap data={sessions || []} />
       </div>
 
-      <div className="relative w-full max-w-screen-lg">
+      <div className="w-full max-w-screen-xl">
         <TimeSeriesChart data={sessions || []} />
       </div>
 

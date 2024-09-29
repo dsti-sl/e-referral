@@ -434,7 +434,7 @@ const FlowCanvas: React.FC = () => {
 
       {/* Drawer for Mobile Flow Simulator (styled as a mobile frame (styling still in progress)) */}
       <div
-        className={`fixed right-20 top-1/4 h-[600px] w-80 transform rounded-lg bg-gray-900 text-white shadow-lg transition-transform duration-300 ${
+        className={`fixed right-20 top-20 h-[700px] w-80 transform rounded-lg bg-gray-900 text-white shadow-lg transition-transform duration-300 ${
           isMobileDrawerOpen
             ? 'translate-x-0'
             : 'fixed inset-full translate-x-full translate-y-full'

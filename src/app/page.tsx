@@ -300,8 +300,8 @@ export default function Home() {
             <Card topDisplay data={closedSessionData} />
           </div>
           <div className="w-full p-1 sm:w-1/2 lg:w-1/3">
-            {/* Adjust width as needed */}
-            <Card topDisplay data={tolNumofRequest} />
+            {/* Card for Active Session */}
+            <Card topDisplay data={activeSession} />
           </div>
           <div className="w-full p-1 sm:w-1/2 lg:w-1/3">
             {/* Adjust width as needed */}
@@ -314,9 +314,9 @@ export default function Home() {
           <div className="mb-4 w-full sm:w-1/2 lg:w-full">
             <Card topDisplay data={totalSessionData} />
           </div>
-          {/* Card for Active Session */}
+          {/* Card for total number of Req */}
           <div className="mb-4 w-full scroll-pt-2 sm:w-1/2 lg:w-full">
-            <Card topDisplay data={activeSession} />
+            <Card topDisplay data={tolNumofRequest} />
           </div>
 
           {/* Card for Daily Session */}

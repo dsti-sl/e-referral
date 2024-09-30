@@ -42,7 +42,9 @@ const Card: React.FC<CardProps> = ({ title, pieData, data, topDisplay }) => {
                   {item.name || 'Loading...'}
                 </div>
                 <div className="my-2 py-4 text-center text-4xl font-bold text-blue-500">
-                  {item.average || 'Loading..'}
+                  {item.average !== undefined && item.average !== null
+                    ? item.average
+                    : 'Loading..'}
                 </div>
               </div>
             ))}

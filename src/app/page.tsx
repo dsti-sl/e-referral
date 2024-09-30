@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import LocationMap from '@/components/ui/LocationMap';
 import InitiatorActivity from '@/components/dashboard/InitiatorActivity';
 import TimeSeriesChart from '@/components/dashboard/TimeSeries';
+import RequestCountChart from '@/components/dashboard/RequestCountChart RequestCountChart';
 
 const data: Record<Service, Record<Period, number[]>> = {
   'Medical Services': {
@@ -260,6 +261,9 @@ export default function Home() {
   const expireSession = [
     { name: 'Expired Sessions', average: stats?.expired_sessions },
   ];
+  const activeSession = [
+    { name: 'Active Sessions', average: stats?.active_sessions },
+  ];
 
   const [selectedPeriod, setSelectedPeriod] = useState<Period>('Daily');
   const [selectedService, setSelectedService] =
@@ -305,19 +309,23 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full px-4 py-4 sm:w-1/2 lg:w-4/12">
+        <div className="w-full px-2 py-4 sm:w-1/2 lg:w-4/12">
           {/* Card for Total Session */}
-          <div className="mb-6 w-full sm:w-1/2 lg:w-full">
-            <Card data={totalSessionData} />
+          <div className="mb-4 w-full sm:w-1/2 lg:w-full">
+            <Card topDisplay data={totalSessionData} />
+          </div>
+          {/* Card for Active Session */}
+          <div className="mb-4 w-full scroll-pt-2 sm:w-1/2 lg:w-full">
+            <Card topDisplay data={activeSession} />
           </div>
 
           {/* Card for Daily Session */}
           <div className="w-full scroll-pt-24 sm:w-1/2 lg:w-full">
-            <Card data={dailySessionData} />
+            <Card topDisplay data={dailySessionData} />
           </div>
         </div>
 
-        {/* Card for Pie Chart */}
+        {/* Card for Bar Chart */}
         <div className="w-full py-4 sm:w-1/2 lg:w-8/12">
           <Card title="Requests by Location" pieData={pieData} />
         </div>
@@ -327,8 +335,13 @@ export default function Home() {
         <LocationMap data={sessions || []} />
       </div>
 
-      <div className="w-full max-w-screen-xl">
-        <TimeSeriesChart data={sessions || []} />
+      <div className="flex w-full max-w-screen-xl">
+        <div className="p-1 sm:w-full md:w-1/2 lg:w-1/2">
+          <TimeSeriesChart data={sessions || []} />
+        </div>
+        <div className="p-1 sm:w-full md:w-1/2 lg:w-1/2">
+          <RequestCountChart data={sessions || []} />
+        </div>
       </div>
 
       {/* <div className="relative mt-8 w-full max-w-screen-lg">

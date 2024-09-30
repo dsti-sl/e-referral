@@ -21,13 +21,13 @@ const Card: React.FC<CardProps> = ({ title, pieData, data, topDisplay }) => {
       {' '}
       {/* Fixed width and height for the card */}
       <div className="flex w-full flex-col overflow-hidden rounded-lg bg-white shadow-lg">
-        <div className="mb-5 pt-4 text-center text-2xl font-bold">{title}</div>
+        <div className="mb-4 pt-4 text-center text-2xl font-bold">{title}</div>
         {pieData && (
-          <div className="mb-8 flex h-full flex-grow items-center justify-center">
+          <div className="flex h-full flex-grow items-center justify-center">
             {' '}
             {/* Adjusted margin-bottom */}
-            <div className="w-100 mb-2 flex items-center justify-center">
-              <Bar data={pieData} width={800} height={418} />
+            <div className="w-100 flex items-center justify-center">
+              <Bar data={pieData} width={750} height={380} />
               {/* Adjust pie chart size */}
             </div>
           </div>
@@ -37,11 +37,11 @@ const Card: React.FC<CardProps> = ({ title, pieData, data, topDisplay }) => {
             className={`${topDisplay ? 'h-25' : 'h-60'} flex-grow align-middle`}
           >
             {data.map((item, index) => (
-              <div key={index} className="my-2">
-                <div className="mb-3 text-wrap text-center text-2xl font-bold">
+              <div key={index} className="my-1">
+                <div className="mb-2 text-wrap text-center text-2xl font-bold">
                   {item.name || 'Loading...'}
                 </div>
-                <div className="mt-6 py-10 text-center text-4xl font-bold text-blue-500">
+                <div className="my-2 py-4 text-center text-4xl font-bold text-blue-500">
                   {item.average || 'Loading..'}
                 </div>
               </div>

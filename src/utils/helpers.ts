@@ -147,6 +147,7 @@ export interface DataItem {
       validator: any; // or define specific type if known
       terminator: any; // or define specific type if known
       allow_custom_feedback: boolean;
+      accendants?: Array<any>;
       descendants?: Array<any>; // or define specific type if known
     }>;
     root: string;
@@ -238,4 +239,44 @@ export const groupRootData = (data: DataItem[]): GroupedData[] => {
       count,
     })),
   );
+};
+
+export const aggregateRequestCounts = (data: DataItem[]) => {
+  const flowTypeCountMap: Record<
+    string,
+    { flowName: string; root: string; total_requests: number }
+  > = {};
+
+  // Ensure data is not null or undefined
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+  // Loop through each data item
+  data.forEach((item) => {
+    const { parameters, request_count } = item;
+
+    // Ensure parameters and flows are valid before processing
+    if (parameters?.flows && Array.isArray(parameters.flows)) {
+      parameters.flows.forEach((flow) => {
+        // Generate unique key using flow name and root
+        const key = `${parameters.root || 'Unknown Root'}`;
+
+        // Initialize entry in map if it doesn't exist
+        if (!flowTypeCountMap[key]) {
+          flowTypeCountMap[key] = {
+            flowName: flow.name,
+            root: parameters.root || 'Unknown Root', // Provide default for root
+            total_requests: 0,
+          };
+        }
+
+        // Increment count
+        flowTypeCountMap[key].total_requests += request_count || 0; // Safely handle undefined request_count
+      });
+    }
+  });
+
+  // Convert object to array for Recharts
+  return Object.values(flowTypeCountMap);
 };

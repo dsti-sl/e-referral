@@ -14,7 +14,7 @@ const TimeSeriesChart = ({ data }: any) => {
   const chartData = prepareData(data);
 
   return (
-    <div className="my-4 border-separate bg-white p-6 shadow-lg">
+    <div className="my-4 border-separate bg-white p-4 shadow-lg">
       <h4 className="mb-2 text-center text-2xl">Daily Requests</h4>
       <ResponsiveContainer width="100%" height={500}>
         <LineChart data={chartData}>

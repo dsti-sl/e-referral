@@ -5,9 +5,9 @@ interface LoadingViewProps {
   view: React.ReactNode;
   centerLoader?: boolean;
   text?: string;
-  addAppToasts?: boolean;
+  addAppToasts?: boolean; // You might need to implement this
   fullHeight?: boolean;
-  spinnerText?: string;
+  spinnerText?: string; // You might need to implement this
 }
 
 interface ConditionalViewProps {
@@ -26,11 +26,11 @@ const LoaderSpinner = () => (
 export function LoadingView({
   isLoading,
   view,
-  centerLoader = true,
-  text = 'Please Wait...',
-  addAppToasts = false,
+  centerLoader = true, // Use this prop if needed, e.g., for styling or layout
+  text = 'Please Wait...', // You might want to use this in the spinner
+  addAppToasts = false, // Implement this if needed
   fullHeight = true,
-  spinnerText = 'Loading',
+  spinnerText = 'Loading', // Use this in the spinner if needed
 }: LoadingViewProps) {
   return (
     <ConditionalView
@@ -39,7 +39,7 @@ export function LoadingView({
       falseView={
         <div className={`${fullHeight ? 'md:w-full lg:w-full' : ''}`}>
           {view}
-          {addAppToasts}
+          {addAppToasts && <div>{/* Implement your toasts here */}</div>}
         </div>
       }
     />

@@ -26,8 +26,8 @@ const Card: React.FC<CardProps> = ({ title, pieData, data, topDisplay }) => {
           <div className="flex h-full flex-grow items-center justify-center">
             {' '}
             {/* Adjusted margin-bottom */}
-            <div className="w-100 flex items-center justify-center">
-              <Bar data={pieData} width={750} height={380} />
+            <div className="w-100 mb-2 flex items-center justify-center">
+              <Bar data={pieData} width={750} height={378} />
               {/* Adjust pie chart size */}
             </div>
           </div>

@@ -1,21 +1,19 @@
 'use client';
-import { FormsField, isValidUrl } from '@/utils/helpers';
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 
+import { FormsField, isValidUrl } from '@/utils/helpers';
+
 interface FormsProps {
   fields: FormsField[];
-  data?: any;
   onSave: (data: { [key: string]: any }) => void;
   onClose: () => void;
 }
 
-const Forms: React.FC<FormsProps> = ({ fields, data, onSave, onClose }) => {
+const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
   const [formState, setFormState] = useState<{ [key: string]: any }>({});
-  const [dynamicFields, setDynamicFields] = useState<FormsField[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  console.log('data  here', data);
   const toggleDynamicField = (name: string, checked: boolean) => {
     // Remove URL fields if checkbox is unchecked
     if (!checked) {
@@ -101,7 +99,7 @@ const Forms: React.FC<FormsProps> = ({ fields, data, onSave, onClose }) => {
       Swal.fire('Invalid URL', 'Please enter a valid Validate URL', 'error');
       return;
     }
-    console.log('data =>', formState);
+
     onSave(formState);
   };
 
@@ -167,7 +165,7 @@ const Forms: React.FC<FormsProps> = ({ fields, data, onSave, onClose }) => {
     </form>
   );
 
-  //Render form fields based on type
+  // Render form fields based on type
   function renderField(field: FormsField) {
     switch (field.type) {
       case 'textarea':

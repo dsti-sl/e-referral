@@ -1,20 +1,30 @@
-// Authentication helper functions
+// auth.ts
 
 export function isAuthenticated(): boolean {
-  // Placeholder logic for checking authentication
-  return !!localStorage.getItem('token');
+  // Check if we're in the browser
+  if (typeof window !== 'undefined') {
+    return !!localStorage.getItem('token');
+  }
+  return false; // Return false if we're on the server
 }
 
 export function login(username: string, password: string): boolean {
-  // Placeholder logic for logging in a user
-  if (username === 'admin' && password === 'password') {
-    localStorage.setItem('token', 'dummy-token');
-    return true;
+  if (typeof window !== 'undefined') {
+    if (username === 'admin' && password === 'password') {
+      localStorage.setItem('token', 'dummy-token');
+      return true;
+    }
   }
   return false;
 }
 
 export function logout(): void {
-  // Logout logic for user
-  localStorage.removeItem('token');
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('token');
+  }
+}
+
+// Optionally, if useAuth is needed, you can define it like this
+export function useAuth() {
+  // Placeholder for useAuth logic
 }

@@ -1,8 +1,3 @@
-import {
-  aggregateRequestCounts,
-  eRoseColor,
-  groupRootData,
-} from '@/utils/helpers';
 import React from 'react';
 import {
   BarChart,
@@ -13,6 +8,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+
+import { aggregateRequestCounts, eRoseColor } from '@/utils/helpers';
 
 const RequestCountChart: React.FC = ({ data }: any) => {
   const chartData = aggregateRequestCounts(data);

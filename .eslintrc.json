@@ -13,6 +13,7 @@
     "react-hooks",
     "@next/eslint-plugin-next",
     "import",
+    "unused-imports",
     "prettier"
   ],
   "parserOptions": {
@@ -29,8 +30,8 @@
   },
   "rules": {
     "no-unused-vars": "error",
+    "no-console": "off",
     "no-unused-imports": "error",
-    "no-console": "warn",
     "no-debugger": "warn",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
@@ -43,6 +44,16 @@
     "@next/next/no-img-element": "warn",
     "@next/next/no-html-link-for-pages": "warn",
     "@next/next/no-document-import-in-page": "error",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "import/order": [
       "warn",
       {
@@ -60,7 +71,14 @@
       }
     ],
     "import/newline-after-import": "warn",
-    "import/no-unused-modules": ["error", { "varsIgnorePattern": "^_" }],
+    "import/no-unused-modules": [
+      "error",
+      {
+        "unusedExports": true,
+        "missingExports": true,
+        "varsIgnorePattern": "^_"
+      }
+    ],
     "object-curly-newline": [
       "error",
       {

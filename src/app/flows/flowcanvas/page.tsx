@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Drawer from '@/components/ui/Drawer';
 import Button from '@/components/Button';
 import Forms from '@/components/ui/Forms';
-import { Trash2Icon, ArrowLeft, EditIcon, CirclePlusIcon } from 'lucide-react';
+import { ArrowLeft, CirclePlusIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { formFields } from '@/utils/helpers';
@@ -88,13 +88,6 @@ const FlowCanvas: React.FC = () => {
   const [nodeToEdit, setNodeToEdit] = useState<NodeData | null>(null);
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
 
-  // Fetch descendants on page load for the initial flowId
-  useEffect(() => {
-    if (flowId) {
-      fetchFlowDescendants(flowId, 'col-1', null);
-    }
-  }, [flowId, isDrawerOpen]);
-
   const fetchFlowDescendants = async (
     parentId: string,
     columnId: string,
@@ -135,6 +128,13 @@ const FlowCanvas: React.FC = () => {
       console.error('Error fetching flow data:', error);
     }
   };
+
+  // Fetch descendants on page load for the initial flowId
+  useEffect(() => {
+    if (flowId) {
+      fetchFlowDescendants(flowId, 'col-1', null);
+    }
+  }, [flowId, isDrawerOpen, fetchFlowDescendants]);
 
   // Handle node click event
   const handleNodeClick = async (columnId: string, nodeId: string) => {

@@ -122,23 +122,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
                         <p className="text-sm text-gray-500">
                           {flow.description}
                         </p>
-                        <label className="flex cursor-pointer items-center">
-                          {/* <span className="mx-4 text-sm text-gray-700">
-                            {flow.is_disabled ? 'Disabled' : 'Enabled'}
-                          </span> */}
-                          {/* <div
-                            className={`relative inline-block h-6 w-11 ${
-                              flow.is_disabled ? 'bg-gray-400' : 'bg-green-600'
-                            } rounded-full transition-colors duration-200`}
-                            onClick={() => handleToggle(flow.id)}
-                          >
-                            <span
-                              className={`absolute left-0.5 top-0.5 h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ${
-                                flow.is_disabled ? 'translate-x-5' : ''
-                              }`}
-                            />
-                          </div> */}
-                        </label>
+                        <label className="flex cursor-pointer items-center"></label>
                       </div>
                     </li>
                   ))

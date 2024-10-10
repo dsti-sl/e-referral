@@ -1,4 +1,4 @@
-// Example of a React Context for authentication
+// AuthContext.tsx
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 
@@ -15,8 +15,9 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<string | null>(null);
 
+  // This variable is now used in the login function
   const login = (userData: string) => {
-    setUser(userData);
+    setUser(userData); // use userData here
   };
 
   const logout = () => {

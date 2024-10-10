@@ -1,5 +1,7 @@
 'use client';
+import { useRouter } from 'next/navigation'; // Next.js imports should come first
 
+import Button from '@/components/Button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -8,11 +10,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import Button from '@/components/Button';
 import { Settings, LogOut, User as AvatarIcon } from 'lucide-react';
 import Image from 'next/image';
-import { isAuthenticated, logout } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
+import { isAuthenticated, logout } from '@/lib/auth'; // Adjusted position to follow Button import
 
 export function User() {
   let session = isAuthenticated() ? { user: { image: null } } : null;
@@ -46,7 +46,7 @@ export function User() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent sideOffset={4}>
-        <DropdownMenuLabel> Tigidankay Bah </DropdownMenuLabel>
+        <DropdownMenuLabel>Tigidankay Bah</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Settings className="pr-2 text-gray-700 hover:text-gray-900" />

@@ -71,14 +71,6 @@
       }
     ],
     "import/newline-after-import": "warn",
-    "import/no-unused-modules": [
-      "error",
-      {
-        "unusedExports": true,
-        "missingExports": true,
-        "varsIgnorePattern": "^_"
-      }
-    ],
     "object-curly-newline": [
       "error",
       {

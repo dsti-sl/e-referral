@@ -1,12 +1,15 @@
 'use client';
-import Swal from 'sweetalert2';
+import { error } from 'console';
+
 import React, { useState, useEffect, useCallback } from 'react';
-import MenuCard from '@/components/MenuCard';
-import FlowsCard from '@/components/FlowsCard';
+import Swal from 'sweetalert2';
+
 import Button from '@/components/Button';
+import FlowsCard from '@/components/FlowsCard';
+import MenuCard from '@/components/MenuCard';
+import { LoadingView } from '@/components/shared/LoadingView';
 import Drawer from '@/components/ui/Drawer';
 import Forms from '@/components/ui/Forms';
-import { LoadingView } from '@/components/shared/LoadingView';
 import { formFields } from '@/utils/helpers';
 
 export default function FlowsPage() {

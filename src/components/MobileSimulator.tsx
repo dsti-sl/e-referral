@@ -1,6 +1,7 @@
-import { BASE_URL } from '@/lib/utils';
-import React, { useState } from 'react';
 import { SendHorizonal, Home, ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { BASE_URL } from '@/lib/utils';
 
 const MobileSimulator = () => {
   const [showPanel, setShowPanel] = useState(false);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
+
 import 'chart.js/auto';
-import BarChart from './dashboard/BarChart';
 
 interface DataItem {
   name: string;

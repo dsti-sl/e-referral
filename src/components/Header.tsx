@@ -27,9 +27,10 @@
 // }
 
 'use client';
-import { useRouter } from 'next/navigation';
-import { User } from '@/components/User';
 import { Bell } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+import { User } from '@/components/User';
 
 export default function Header() {
   const router = useRouter();

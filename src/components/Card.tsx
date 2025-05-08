@@ -5,7 +5,7 @@ import 'chart.js/auto';
 
 interface DataItem {
   name: string;
-  average: number;
+  average: number | string;
 }
 
 interface CardProps {

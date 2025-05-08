@@ -1,4 +1,6 @@
 'use client';
+import { Settings, LogOut, User as AvatarIcon } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation'; // Next.js imports should come first
 
 import Button from '@/components/Button';
@@ -10,8 +12,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { Settings, LogOut, User as AvatarIcon } from 'lucide-react';
-import Image from 'next/image';
 import { isAuthenticated, logout } from '@/lib/auth'; // Adjusted position to follow Button import
 
 export function User() {

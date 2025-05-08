@@ -1,4 +1,3 @@
-import { prepareData, eRoseColor } from '@/utils/helpers';
 import React from 'react';
 import {
   LineChart,
@@ -9,6 +8,8 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts';
+
+import { prepareData, eRoseColor } from '@/utils/helpers';
 
 const TimeSeriesChart = ({ data }: any) => {
   const chartData = prepareData(data);

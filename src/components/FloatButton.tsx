@@ -1,5 +1,5 @@
-import React from 'react';
 import { Smartphone } from 'lucide-react';
+import React from 'react';
 
 const FloatButton = ({ onClick }: { onClick: () => void }) => {
   return (

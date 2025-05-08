@@ -1,8 +1,9 @@
+import { ArrowLeft, ArrowRight, Search, X } from 'lucide-react'; // Import icons from lucide-react
 import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
+
 import { LoadingView } from '@/components/shared/LoadingView'; // Adjust the path as necessary
-import { ArrowLeft, ArrowRight, Search, X } from 'lucide-react'; // Import icons from lucide-react
 
 interface Flow {
   id: number;

@@ -1,16 +1,32 @@
 'use client';
-import L from 'leaflet';
+import L, { LatLng, LatLngLiteral } from 'leaflet';
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+
+function MapEventHandler({ onZoomEnd }: { onZoomEnd: () => void }) {
+  const map = useMapEvents({
+    zoomend: onZoomEnd,
+  });
+  return null;
+}
 
 const LocationMap = ({ data }: { data: any[] }) => {
   const [map, setMap] = useState<any>(null);
-  const centerPosition = [8.4897, -11.812]; // Sierra Leone center
+  const centerPosition: LatLngLiteral = {
+    lat: 8.4897,
+    lng: -11.812,
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      delete L.Icon.Default.prototype._getIconUrl;
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
           'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -72,9 +88,9 @@ const LocationMap = ({ data }: { data: any[] }) => {
         zoom={8}
         scrollWheelZoom={false}
         style={{ height: '700px', width: '100%' }}
-        whenCreated={setMap}
-        onZoomEnd={handleZoomEnd}
+        whenReady={() => setMap}
       >
+        <MapEventHandler onZoomEnd={handleZoomEnd} />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {markers}
       </MapContainer>

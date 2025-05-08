@@ -11,7 +11,7 @@ import {
 
 import { aggregateRequestCounts, eRoseColor } from '@/utils/helpers';
 
-const RequestCountChart: React.FC = ({ data }: any) => {
+const RequestCountChart: React.FC<any> = ({ data }: any) => {
   const chartData = aggregateRequestCounts(data);
   return (
     <div className="my-4 border-separate bg-white p-4 shadow-lg">

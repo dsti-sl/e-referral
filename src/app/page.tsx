@@ -15,8 +15,8 @@ const LocationMap = dynamic(() => import('@/components/ui/LocationMap'), {
 
 export default function Home() {
   const BaseUrl = process.env.BASE_URL;
-  const [stats, setStats] = useState({});
-  const [sessions, setSessions] = useState([]);
+  const [stats, setStats] = useState<any>({});
+  const [sessions, setSessions] = useState<any>([]);
 
   const pieData = useMemo(() => generatePieData(sessions), [sessions]);
 
@@ -33,7 +33,7 @@ export default function Home() {
       }
       const data = await response.json();
       setStats(data);
-    } catch (error) {
+    } catch (error: any) {
       Swal.fire({
         title: 'Error!',
         text: error.detail || 'An unexpected error occurred.',
@@ -56,7 +56,7 @@ export default function Home() {
       }
       const data = await response.json();
       setSessions(data); // Populate with real data
-    } catch (error) {
+    } catch (error: any) {
       Swal.fire({
         title: 'Error!',
         text: error.detail || 'An unexpected error occurred.',

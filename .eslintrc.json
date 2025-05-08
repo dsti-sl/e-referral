@@ -31,7 +31,16 @@
     }
   },
   "rules": {
-    "no-unused-vars": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "caughtErrors": "all",
+        "ignoreRestSiblings": false,
+        "reportUsedIgnorePattern": false
+      }
+    ],
     "no-console": "off",
     "no-debugger": "warn",
     "react/prop-types": "off",

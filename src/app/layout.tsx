@@ -52,7 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning={true}>
         <div className="flex h-screen overflow-hidden">
           <Sidebar />
           <div className="flex w-screen flex-1 flex-col">

@@ -18,7 +18,7 @@
   },
   "engines": {
     "node": "20.15.0",
-    "npm": ">=10.0.0"
+    "npm": "10.7.0"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.1",

@@ -14,6 +14,7 @@ interface Flow {
 
 interface FlowsCardProps {
   status: 'Active' | 'Draft' | 'Archived' | 'Deleted';
+  flows?: Flow[];
 }
 
 const FlowsCard = ({ status }: FlowsCardProps) => {

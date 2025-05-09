@@ -1,6 +1,6 @@
 // Reusable next.js built in button component
 
-import { ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 interface ButtonProps {
   children: ReactNode;
@@ -8,13 +8,19 @@ interface ButtonProps {
   className?: string;
 }
 
-export default function Button({ children, onClick, className }: ButtonProps) {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ children, onClick, className }, ref) => {
   return (
     <button
+      ref={ref}
       className={`rounded bg-erefer-rose px-4 py-2 text-black hover:bg-white ${className}`}
       onClick={onClick}
     >
       {children}
     </button>
   );
-}
+});
+
+Button.displayName = 'Button';
+
+
+export default Button;

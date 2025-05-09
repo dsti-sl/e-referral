@@ -2,7 +2,7 @@
 import { ArrowLeft, CirclePlusIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Swal from 'sweetalert2';
 
 import Button from '@/components/Button';
@@ -20,8 +20,10 @@ interface NodeData {
   description?: string;
   priority?: string;
   terminator?: boolean;
+  terminatorUrl?: string;
   allow_custom_feedback?: boolean;
   validator?: boolean;
+  validatorUrl?: string;
   is_disabled?: boolean;
   descendants?: Array<object>;
 }
@@ -73,7 +75,7 @@ const initialColumns: Column[] = [
   },
 ];
 
-const FlowCanvas: React.FC = () => {
+const FlowCanvasContent: React.FC = () => {
   const searchParams = useSearchParams();
   const flowId = searchParams.get('flowId');
   const BaseUrl = process.env.BASE_URL;
@@ -193,7 +195,9 @@ const FlowCanvas: React.FC = () => {
   };
 
   // Handle node add/edit
-  const handleAddOrEditNode = async (data: NodeData) => {
+  const handleAddOrEditNode = async (
+    data: NodeData | { [key: string]: any } | any,
+  ) => {
     const parentId = selectedNodeId || flowId;
     const newNode = {
       ...data,
@@ -256,7 +260,7 @@ const FlowCanvas: React.FC = () => {
       collectNodesToDelete(nodeId);
 
       // Delete nodes from the server one by one
-      for (const id of nodesToDelete) {
+      for (const id of Array.from(nodesToDelete)) {
         const response = await fetch(`${BaseUrl}/flows/${id}`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
@@ -286,7 +290,9 @@ const FlowCanvas: React.FC = () => {
       setColumns((prevColumns) =>
         prevColumns.map((column) => ({
           ...column,
-          nodes: column.nodes.filter((node) => !nodesToDelete.has(node.id)),
+          nodes: column.nodes.filter(
+            (node) => !nodesToDelete.has(node.id as string),
+          ),
         })),
       );
     } catch (error) {
@@ -428,7 +434,7 @@ const FlowCanvas: React.FC = () => {
         <Forms
           fields={formFields}
           onSave={handleAddOrEditNode}
-          initialData={nodeToEdit}
+          initialData={nodeToEdit as NodeData}
           onClose={() => setIsDrawerOpen(false)}
         />
       </Drawer>
@@ -471,6 +477,26 @@ const FlowCanvas: React.FC = () => {
         <FloatButton onClick={() => setIsMobileDrawerOpen(true)} />
       )}
     </div>
+  );
+};
+
+const LoadingFlowCanvas = () => {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center text-center">
+      <div
+        className="loader mb-4 h-12 w-12 animate-spin rounded-full border-4 border-t-4 border-gray-200"
+        style={{ borderTopColor: '#a85866' }}
+      ></div>
+      <small className="text-black">Loading flow canvas...</small>
+    </div>
+  );
+};
+
+const FlowCanvas: React.FC = () => {
+  return (
+    <Suspense fallback={<LoadingFlowCanvas />}>
+      <FlowCanvasContent />
+    </Suspense>
   );
 };
 

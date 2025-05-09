@@ -4,14 +4,39 @@ import Swal from 'sweetalert2';
 
 import { FormsField, isValidUrl } from '@/utils/helpers';
 
+interface NodeData {
+  id?: string;
+  name: string;
+  message?: string;
+  parent_id?: any;
+  description?: string;
+  priority?: string;
+  terminator?: boolean;
+  terminatorUrl?: string;
+  allow_custom_feedback?: boolean;
+  validator?: boolean;
+  validatorUrl?: string;
+  is_disabled?: boolean;
+  descendants?: Array<object>;
+}
+
 interface FormsProps {
   fields: FormsField[];
-  onSave: (data: { [key: string]: any }) => void;
+  initialData?: NodeData;
+  onSave: (data: NodeData) => void;
   onClose: () => void;
 }
 
-const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
-  const [formState, setFormState] = useState<{ [key: string]: any }>({});
+const Forms: React.FC<FormsProps> = ({
+  fields,
+  initialData,
+  onSave,
+  onClose,
+}) => {
+  const [formState, setFormState] = useState<NodeData>({
+    name: '',
+    ...initialData,
+  });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const toggleDynamicField = (name: string, checked: boolean) => {
@@ -83,18 +108,18 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
 
     // Validate URLs if the respective checkbox is checked
     if (
-      formState.terminate &&
-      formState.terminateUrl &&
-      !isValidUrl(formState.terminateUrl)
+      formState.terminator &&
+      formState.terminatorUrl &&
+      !isValidUrl(formState.terminatorUrl)
     ) {
       Swal.fire('Invalid URL', 'Please enter a valid Terminate URL', 'error');
       return;
     }
 
     if (
-      formState.validate &&
-      formState.validateUrl &&
-      !isValidUrl(formState.validateUrl)
+      formState.validator &&
+      formState.validatorUrl &&
+      !isValidUrl(formState.validatorUrl)
     ) {
       Swal.fire('Invalid URL', 'Please enter a valid Validate URL', 'error');
       return;
@@ -115,7 +140,7 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
       ))}
 
       {/* Display dynamic fields based on checkbox selection */}
-      {formState.terminate && (
+      {formState.terminator && (
         <div className="flex flex-col">
           <label htmlFor="terminator" className="text-gray-700">
             Terminate URL*
@@ -131,14 +156,14 @@ const Forms: React.FC<FormsProps> = ({ fields, onSave, onClose }) => {
         </div>
       )}
 
-      {formState.validate && (
+      {formState.validator && (
         <div className="flex flex-col">
-          <label htmlFor="validateUrl" className="text-gray-700">
+          <label htmlFor="validatorUrl" className="text-gray-700">
             Validate URL*
           </label>
           <input
-            id="validateUrl"
-            name="validateUrl"
+            id="validatorUrl"
+            name="validatorUrl"
             type="text"
             placeholder="Enter validate URL"
             onChange={handleChange}

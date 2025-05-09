@@ -16,13 +16,13 @@ const LocationMap = dynamic(() => import('@/components/ui/LocationMap'), {
 export default function Home() {
   const BaseUrl = process.env.BASE_URL;
   const [stats, setStats] = useState<any>({});
-  const [sessions, setSessions] = useState<any>([]);
+  const [sessions, setSessions] = useState<any[]>([]);
 
   const pieData = useMemo(() => generatePieData(sessions), [sessions]);
 
   const fetchStats = useCallback(async () => {
     try {
-      const response = await fetch(`${BaseUrl}/channels/sessions/stats`);
+      const response = await fetch(`${BaseUrl}/api/channels/sessions/stats`);
       if (!response.ok) {
         Swal.fire({
           title: 'Error!',
@@ -45,7 +45,7 @@ export default function Home() {
 
   const fetchSessions = useCallback(async () => {
     try {
-      const response = await fetch(`${BaseUrl}/channels/sessions/`);
+      const response = await fetch(`${BaseUrl}/api/channels/sessions/`);
       if (!response.ok) {
         Swal.fire({
           title: 'Error!',

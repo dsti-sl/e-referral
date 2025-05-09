@@ -1,5 +1,4 @@
 'use client';
-import { error } from 'console';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
@@ -12,11 +11,18 @@ import Drawer from '@/components/ui/Drawer';
 import Forms from '@/components/ui/Forms';
 import { formFields } from '@/utils/helpers';
 
+interface Flow {
+  id: number;
+  name: string;
+  description: string;
+  is_disabled: boolean;
+}
+
 export default function FlowsPage() {
   const [selectedStatus, setSelectedStatus] = useState<
     'Active' | 'Draft' | 'Archived' | 'Deleted'
   >('Active');
-  const [flowsData, setFlowsData] = useState<{ [key: string]: any[] }>({
+  const [flowsData, setFlowsData] = useState<{ [key: string]: any }>({
     Active: [],
     Draft: [],
     Archived: [],
@@ -57,7 +63,8 @@ export default function FlowsPage() {
       if (!response.ok)
         return Swal.fire({
           title: 'Error!',
-          text: error.detail || 'An unexpected error occurred.',
+          // TODO: Response message properly or throw error
+          text: 'An unexpected error occurred.',
           icon: 'error',
           confirmButtonText: 'OK',
         });
@@ -81,7 +88,7 @@ export default function FlowsPage() {
         Archived: archivedFlows,
         Deleted: deletedFlows,
       });
-    } catch (error) {
+    } catch (error: any) {
       Swal.fire({
         title: 'Error!',
         text: error.detail || 'An unexpected error occurred.',
@@ -138,7 +145,7 @@ export default function FlowsPage() {
           ...prevData,
           Active: [...prevData.Active, reslt],
         }));
-      } catch (err) {
+      } catch (err: any) {
         console.error('Failed to save flow:', err);
 
         // Show error alert

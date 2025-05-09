@@ -136,13 +136,14 @@ const monthAbbreviations: Record<number, string> = {
 export const prepareData = (data: DataItem[]): ChartData[] => {
   const dateMap: Record<string, number> = {};
 
-  data.forEach((item) => {
-    const date = new Date(item.end).toISOString().split('T')[0]; // Extracting date (YYYY-MM-DD)
-    if (!dateMap[date]) {
-      dateMap[date] = 0; // Initialize if date not exists
-    }
-    dateMap[date] += 1; // Increment count for that day
-  });
+  data.length > 0 &&
+    data.forEach((item) => {
+      const date = new Date(item.end).toISOString().split('T')[0]; // Extracting date (YYYY-MM-DD)
+      if (!dateMap[date]) {
+        dateMap[date] = 0; // Initialize if date not exists
+      }
+      dateMap[date] += 1; // Increment count for that day
+    });
 
   // Convert to an array, format date, and sort by date
   return Object.entries(dateMap)
@@ -303,15 +304,16 @@ export const data: Record<Service, Record<Period, number[]>> = {
 export const generatePieData = (data: any[]) => {
   const districtData: Record<string, number> = {};
 
-  data.forEach((session) => {
-    const district = extractDistrict(session.parameters.location_name);
-    if (district) {
-      if (!districtData[district]) {
-        districtData[district] = 0;
+  data.length > 0 &&
+    data.forEach((session) => {
+      const district = extractDistrict(session.parameters.location_name);
+      if (district) {
+        if (!districtData[district]) {
+          districtData[district] = 0;
+        }
+        districtData[district] += session.request_count;
       }
-      districtData[district] += session.request_count;
-    }
-  });
+    });
 
   const labels = Object.keys(districtData);
   const dataValues = Object.values(districtData);

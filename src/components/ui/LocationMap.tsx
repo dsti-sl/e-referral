@@ -39,37 +39,40 @@ const LocationMap = ({ data }: { data: any[] }) => {
   }, []);
 
   // Extract and map through the locations from the data array
-  const markers = data
-    .filter((item) => item?.parameters?.location)
-    .map((item, index) => {
-      const locationString = item?.parameters?.location;
-      const locationArray = locationString?.split(',');
+  const markers =
+    data.length > 0
+      ? data
+          .filter((item) => item?.parameters?.location)
+          .map((item, index) => {
+            const locationString = item?.parameters?.location;
+            const locationArray = locationString?.split(',');
 
-      if (locationArray && locationArray.length === 2) {
-        const [lat, lng] = locationArray.map(Number);
-        if (!isNaN(lat) && !isNaN(lng)) {
-          const totalRequests = data
-            .filter((loc) => loc?.parameters?.location === locationString)
-            .reduce((acc, loc) => acc + loc.request_count, 0);
+            if (locationArray && locationArray.length === 2) {
+              const [lat, lng] = locationArray.map(Number);
+              if (!isNaN(lat) && !isNaN(lng)) {
+                const totalRequests = data
+                  .filter((loc) => loc?.parameters?.location === locationString)
+                  .reduce((acc, loc) => acc + loc.request_count, 0);
 
-          return (
-            <Marker key={index} position={[lat, lng]}>
-              <Popup>
-                <div>
-                  <strong>
-                    {item.parameters.location_name || 'Unknown Location'}
-                  </strong>
-                  <br />
-                  Total Requests: {totalRequests}
-                </div>
-              </Popup>
-            </Marker>
-          );
-        }
-      }
-      return null;
-    })
-    .filter((marker) => marker !== null);
+                return (
+                  <Marker key={index} position={[lat, lng]}>
+                    <Popup>
+                      <div>
+                        <strong>
+                          {item.parameters.location_name || 'Unknown Location'}
+                        </strong>
+                        <br />
+                        Total Requests: {totalRequests}
+                      </div>
+                    </Popup>
+                  </Marker>
+                );
+              }
+            }
+            return null;
+          })
+          .filter((marker) => marker !== null)
+      : [];
 
   const handleZoomEnd = () => {
     if (map) {

@@ -179,7 +179,7 @@ export default function FlowsPage() {
             <div className="sm:mt-4 sm:w-full md:w-3/4 lg:w-3/4">
               <FlowsCard
                 status={selectedStatus}
-                flows={flowsData[selectedStatus] as Flow[]}
+                flows={flowsData[selectedStatus]}
               />
             </div>
           }

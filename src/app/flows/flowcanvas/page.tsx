@@ -20,8 +20,10 @@ interface NodeData {
   description?: string;
   priority?: string;
   terminator?: boolean;
+  terminatorUrl?: string;
   allow_custom_feedback?: boolean;
   validator?: boolean;
+  validatorUrl?: string;
   is_disabled?: boolean;
   descendants?: Array<object>;
 }
@@ -193,7 +195,9 @@ const FlowCanvas: React.FC = () => {
   };
 
   // Handle node add/edit
-  const handleAddOrEditNode = async (data: NodeData) => {
+  const handleAddOrEditNode = async (
+    data: NodeData | { [key: string]: any } | any,
+  ) => {
     const parentId = selectedNodeId || flowId;
     const newNode = {
       ...data,
@@ -256,7 +260,7 @@ const FlowCanvas: React.FC = () => {
       collectNodesToDelete(nodeId);
 
       // Delete nodes from the server one by one
-      for (const id of nodesToDelete) {
+      for (const id of Array.from(nodesToDelete)) {
         const response = await fetch(`${BaseUrl}/flows/${id}`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
@@ -286,7 +290,9 @@ const FlowCanvas: React.FC = () => {
       setColumns((prevColumns) =>
         prevColumns.map((column) => ({
           ...column,
-          nodes: column.nodes.filter((node) => !nodesToDelete.has(node.id)),
+          nodes: column.nodes.filter(
+            (node) => !nodesToDelete.has(node.id as string),
+          ),
         })),
       );
     } catch (error) {
@@ -428,7 +434,7 @@ const FlowCanvas: React.FC = () => {
         <Forms
           fields={formFields}
           onSave={handleAddOrEditNode}
-          initialData={nodeToEdit}
+          initialData={nodeToEdit as NodeData}
           onClose={() => setIsDrawerOpen(false)}
         />
       </Drawer>

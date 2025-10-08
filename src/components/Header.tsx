@@ -35,6 +35,11 @@ import { User } from '@/components/User';
 export default function Header() {
   const router = useRouter();
 
+  const logout = () => {
+    localStorage.removeItem('user');
+    router.push('/auth/login');
+  };
+
   return (
     <header className="w-full bg-white">
       <div className="container flex flex-wrap items-center justify-between px-6 py-4">
@@ -49,6 +54,12 @@ export default function Header() {
         <div className="flex items-center justify-start space-x-4">
           <Bell className="text-erefer-rose hover:text-erefer-light" />
           <User />
+          <button
+            onClick={logout}
+            className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </header>

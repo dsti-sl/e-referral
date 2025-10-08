@@ -1,6 +1,7 @@
 # e-Referral System Documentation
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Features](#features)
 - [Getting Started](#getting-started)
@@ -45,6 +46,7 @@ The e-Referral System is a comprehensive digital platform built with Next.js and
 ### Installation
 
 1. **Clone the Repository**
+
 ```bash
 git clone https://github.com/dsti-sl/e-referral.git
 # or
@@ -52,11 +54,13 @@ git clone git@github.com:dsti-sl/e-referral.git
 ```
 
 2. **Navigate to Project Directory**
+
 ```bash
 cd e-referral
 ```
 
 3. **Setup Node.js Version**
+
 ```bash
 # Using nvm (recommended)
 nvm install 20.15.0
@@ -64,11 +68,13 @@ nvm use 20.15.0
 ```
 
 4. **Install Dependencies**
+
 ```bash
 npm install
 ```
 
 5. **Start Development Server**
+
 ```bash
 npm run dev
 ```
@@ -85,6 +91,7 @@ cp .env.example .env.local
 ```
 
 Configure your environment variables in the `.env.local` file:
+
 ```env
 # Database Configuration
 DATABASE_URL=your_database_connection_string
@@ -117,22 +124,26 @@ API_BASE_URL=your_api_base_url
 ## Libraries
 
 ### Core Dependencies
+
 - **Next.js** - React framework with App Router
 - **React** - UI library for building user interfaces
 - **TypeScript** - Type-safe JavaScript development
 
 ### UI & Styling
+
 - **Tailwind CSS** - Utility-first CSS framework
 - **Custom UI Components** - Reusable component library
 - **Recharts** - Data visualization and charting library
 
 ### Development & Code Quality
+
 - **ESLint** - Code linting and quality checks
 - **Prettier** - Code formatting
 - **Husky** - Git hooks for pre-commit checks
 - **TypeScript** - Static type checking
 
 ### Authentication & Data
+
 - **NextAuth.js** - Authentication solution (inferred)
 - **Database integration** - Via lib/db.ts
 - **API utilities** - Custom API layer in lib/api.ts
@@ -192,18 +203,22 @@ e-referral/
 ## Development Workflow
 
 ### Code Quality Standards
+
 The project maintains high code quality with:
+
 - **TypeScript** - Static type checking for robust development
 - **ESLint** - Code linting with custom rules
 - **Prettier** - Consistent code formatting
 - **Husky** - Pre-commit hooks for quality checks
 
 ### Authentication Flow
+
 - Context-based authentication using AuthContext
 - Custom useAuth hook for authentication state management
 - Protected routes and role-based access control
 
 ### Component Architecture
+
 - **UI Components** - Reusable component library in `components/ui/`
 - **Shared Components** - Common components across the application
 - **Dashboard Components** - Specialized components for dashboard functionality
@@ -228,19 +243,23 @@ npm run type-check    # Run TypeScript type checking
 ## Code Quality
 
 ### Pre-commit Hooks
+
 The project uses Husky to run pre-commit checks:
+
 - Code linting with ESLint
 - Code formatting with Prettier
 - TypeScript type checking
 - Additional custom checks as configured
 
 ### ESLint Configuration
+
 - Custom ESLint rules for Next.js and TypeScript
 - Accessibility checks
 - Import/export best practices
 - React hooks rules
 
 ### Prettier Configuration
+
 - Consistent code formatting across the project
 - Automatic formatting on save (VS Code configured)
 - Integration with ESLint for conflict resolution
@@ -250,6 +269,7 @@ The project uses Husky to run pre-commit checks:
 ### Common Issues
 
 **Node.js Version Issues**
+
 ```bash
 Error: "Project requires Node.js v20.15.0"
 Solution: Use nvm to switch to the correct version:
@@ -258,11 +278,13 @@ nvm use 20.15.0
 ```
 
 **Environment Variables Issues**
+
 - Ensure `.env.local` file exists and contains all required variables
 - Check database connection string format
 - Verify API endpoints and authentication configuration
 
 **Build Issues**
+
 ```bash
 # Clear Next.js cache
 rm -rf .next
@@ -276,16 +298,19 @@ npm run type-check
 ```
 
 **Authentication Issues**
+
 - Verify NextAuth configuration in environment variables
 - Check database connection for session storage
 - Ensure NEXTAUTH_SECRET is properly set
 
 **Database Connection Issues**
+
 - Verify DATABASE_URL format and credentials
 - Check database server availability
 - Test connection independently
 
 **ESLint/Prettier Conflicts**
+
 ```bash
 # Fix formatting issues
 npm run format
@@ -296,6 +321,7 @@ npx eslint --print-config src/app/page.tsx
 ```
 
 ### Performance Issues
+
 - Monitor bundle size with Next.js analyzer
 - Check for unused dependencies
 - Optimize images and static assets
@@ -338,6 +364,7 @@ npx eslint --print-config src/app/page.tsx
 8. **Submit a Pull Request**
 
 ### Development Guidelines
+
 - Follow TypeScript strict mode practices
 - Use proper type definitions for all components
 - Maintain consistent naming conventions
@@ -349,10 +376,10 @@ npx eslint --print-config src/app/page.tsx
 ## Contact
 
 For questions, feedback, or contributions, please reach out via:
+
 - **Development Team** - Contact the development team
 - **Issues** - Create an issue on GitHub for bug reports or feature requests
 
 ---
 
 © 2025 DSTI. All rights reserved.
-

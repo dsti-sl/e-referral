@@ -22,50 +22,64 @@ export default function RootLayout({
 }
  */
 
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import React from 'react';
+// import type { Metadata } from 'next';
+// import { Inter } from 'next/font/google';
+// import React from 'react';
+
+// import './globals.css';
+// import Footer from '@/components/Footer';
+// import Header from '@/components/Header';
+// import Sidebar from '@/components/Sidebar';
+
+// const inter = Inter({ subsets: ['latin'] });
+
+// export const metadata: Metadata = {
+//   title: 'e-Refferal Pathways Dashboard',
+//   description:
+//     'e-Refferal Pathways Client Dashboard for creating and managing flows and data visualizations.',
+//   keywords: [
+//     'e-refferal pathways',
+//     'client dashboard',
+//     'flow creation',
+//     'data visualization',
+//   ],
+// };
+
+// export default function RootLayout({
+//   children,
+// }: Readonly<{
+//   children: React.ReactNode;
+// }>) {
+//   return (
+//     <html lang="en">
+//       <body className={inter.className} suppressHydrationWarning={true}>
+//         <div className="flex h-screen overflow-hidden">
+//           <Sidebar />
+//           <div className="flex w-screen flex-1 flex-col">
+//             <Header />
+//             <main className="w-screen flex-1 overflow-y-auto bg-gray-100 py-6">
+//               {children}
+//             </main>
+//             <div className="h-15 w-screen bg-white">
+//               <Footer />
+//             </div>
+//           </div>
+//         </div>
+//       </body>
+//     </html>
+//   );
+// }
 
 import './globals.css';
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
-
-const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: 'e-Refferal Pathways Dashboard',
-  description:
-    'e-Refferal Pathways Client Dashboard for creating and managing flows and data visualizations.',
-  keywords: [
-    'e-refferal pathways',
-    'client dashboard',
-    'flow creation',
-    'data visualization',
-  ],
-};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning={true}>
-        <div className="flex h-screen overflow-hidden">
-          <Sidebar />
-          <div className="flex w-screen flex-1 flex-col">
-            <Header />
-            <main className="w-screen flex-1 overflow-y-auto bg-gray-100 py-6">
-              {children}
-            </main>
-            <div className="h-15 w-screen bg-white">
-              <Footer />
-            </div>
-          </div>
-        </div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

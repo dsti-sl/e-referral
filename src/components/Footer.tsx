@@ -6,7 +6,7 @@ export default function Foote() {
           <img src="UNICEF_Logo.png" alt="UNICEF Logo" className="h-6 w-auto" />
         </div>
         <div className="flex items-center">
-          <span className="text-gray-700">© 2024 All rights reserved.</span>
+          <span className="text-gray-700">© 2025 All rights reserved.</span>
         </div>
         <div className="flex items-center">
           <h1 className="px-5 py-2.5 md:mb-0 lg:leading-normal">

@@ -85,7 +85,9 @@ const LocationMap = ({ data }: { data: any[] }) => {
 
   return (
     <div className="my-4 border-separate bg-white p-6 shadow-lg">
-      <h4 className="mb-2 py-4 text-center text-2xl">Session by Location</h4>
+      <h4 className="mb-2 py-4 text-center text-2xl">
+        Referral Reports by Location
+      </h4>
       <MapContainer
         center={centerPosition}
         zoom={8}

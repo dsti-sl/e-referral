@@ -1,15 +1,21 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import React, { useState, useEffect, useCallback } from 'react';
 import Swal from 'sweetalert2';
 
 import Button from '@/components/Button';
+import FloatButton from '@/components/FloatButton';
 import FlowsCard from '@/components/FlowsCard';
 import MenuCard from '@/components/MenuCard';
 import { LoadingView } from '@/components/shared/LoadingView';
 import Drawer from '@/components/ui/Drawer';
 import Forms from '@/components/ui/Forms';
 import { formFields } from '@/utils/helpers';
+
+const MobileSimulator = dynamic(() => import('@/components/MobileSimulator'), {
+  ssr: false,
+});
 
 interface Flow {
   id: number;
@@ -28,6 +34,7 @@ export default function FlowsPage() {
     Archived: [],
     Deleted: [],
   });
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [drawerConfig, setDrawerConfig] = useState<{
@@ -164,7 +171,7 @@ export default function FlowsPage() {
 
   useEffect(() => {
     fetchFlows();
-  }, [flowsData, fetchFlows]);
+  }, [fetchFlows]);
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-between sm:w-full md:flex-row">
@@ -207,6 +214,15 @@ export default function FlowsPage() {
           onSave={handleSave}
         />
       </Drawer>
+
+      <MobileSimulator
+        isOpen={isSimulatorOpen}
+        onClose={() => setIsSimulatorOpen(false)}
+      />
+
+      {!isSimulatorOpen && (
+        <FloatButton onClick={() => setIsSimulatorOpen(true)} />
+      )}
     </div>
   );
 }

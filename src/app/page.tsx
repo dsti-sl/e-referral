@@ -73,15 +73,15 @@ export default function Home() {
 
   const totalSessionData = [
     {
-      name: 'Average Session Time',
+      name: 'Average Referral Report Time',
       average: roundToTwoDecimals(stats?.average_duration_minutes) + ' mins',
     },
   ];
   const dailySessionData = [
-    { name: 'Total Sessions', average: stats?.total_sessions },
+    { name: 'Total Referral Reports', average: stats?.total_sessions },
   ];
   const closedSessionData = [
-    { name: 'Closed Sessions', average: stats?.closed_sessions },
+    { name: 'Closed Referral Reports', average: stats?.closed_sessions },
   ];
   const tolNumofRequest = [
     {
@@ -91,10 +91,10 @@ export default function Home() {
   ];
 
   const expireSession = [
-    { name: 'Expired Sessions', average: stats?.expired_sessions },
+    { name: 'Expired Referral Reports', average: stats?.expired_sessions },
   ];
   const activeSession = [
-    { name: 'Active Sessions', average: stats?.active_sessions },
+    { name: 'Active Referral Reports', average: stats?.active_sessions },
   ];
 
   return (

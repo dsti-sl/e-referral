@@ -2,7 +2,7 @@
 import { ArrowLeft, CirclePlusIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import Swal from 'sweetalert2';
 
 import Button from '@/components/Button';
@@ -91,46 +91,49 @@ const FlowCanvasContent: React.FC = () => {
   const [nodeToEdit, setNodeToEdit] = useState<NodeData | null>(null);
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
 
-  const fetchFlowDescendants = async (
-    parentId: string,
-    columnId: string,
-    selectedNodeId: string | null,
-  ) => {
-    try {
-      const response = await fetch(
-        `${BaseUrl}/flows/${parentId}?is_disabled_eq=false`,
-      );
-      if (!response.ok) throw new Error('Failed to fetch descendants');
-      const result = await response.json();
+  const fetchFlowDescendants = useCallback(
+    async (
+      parentId: string,
+      columnId: string,
+      selectedNodeId: string | null,
+    ) => {
+      try {
+        const response = await fetch(
+          `${BaseUrl}/flows/${parentId}?is_disabled_eq=false`,
+        );
+        if (!response.ok) throw new Error('Failed to fetch descendants');
+        const result = await response.json();
 
-      const filteredDescendants = selectedNodeId
-        ? result.descendants.filter(
-            (descendant: NodeData) =>
-              descendant.parent_id === selectedNodeId &&
-              descendant.is_disabled === false,
-          )
-        : result.descendants.filter(
-            (descendant: NodeData) =>
-              descendant.parent_id == flowId &&
-              descendant.is_disabled === false,
-          );
+        const filteredDescendants = selectedNodeId
+          ? result.descendants.filter(
+              (descendant: NodeData) =>
+                descendant.parent_id === selectedNodeId &&
+                descendant.is_disabled === false,
+            )
+          : result.descendants.filter(
+              (descendant: NodeData) =>
+                descendant.parent_id == flowId &&
+                descendant.is_disabled === false,
+            );
 
-      setColumns((prevColumns) =>
-        prevColumns.map((col) =>
-          col.id === columnId
-            ? {
-                ...col,
-                nodes: filteredDescendants || [],
-                name: result.name,
-                allowUserFeedback: result.allow_custom_feedback || false,
-              }
-            : col,
-        ),
-      );
-    } catch (error) {
-      console.error('Error fetching flow data:', error);
-    }
-  };
+        setColumns((prevColumns) =>
+          prevColumns.map((col) =>
+            col.id === columnId
+              ? {
+                  ...col,
+                  nodes: filteredDescendants || [],
+                  name: result.name,
+                  allowUserFeedback: result.allow_custom_feedback || false,
+                }
+              : col,
+          ),
+        );
+      } catch (error) {
+        console.error('Error fetching flow data:', error);
+      }
+    },
+    [BaseUrl, flowId],
+  );
 
   // Fetch descendants on page load for the initial flowId
   useEffect(() => {

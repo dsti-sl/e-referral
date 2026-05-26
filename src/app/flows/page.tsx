@@ -171,7 +171,7 @@ export default function FlowsPage() {
 
   useEffect(() => {
     fetchFlows();
-  }, [flowsData, fetchFlows]);
+  }, [fetchFlows]);
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-between sm:w-full md:flex-row">

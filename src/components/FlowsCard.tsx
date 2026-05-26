@@ -118,7 +118,7 @@ const FlowsCard = ({ status }: FlowsCardProps) => {
                         }}
                         className="text-md font-semibold text-black"
                       >
-                        {flow.name}
+                        {flow.name} - <code className="blue">*{flow.id}#</code>
                       </Link>
                       <div className="mt-2 flex items-center justify-between">
                         <p className="text-sm text-gray-500">
